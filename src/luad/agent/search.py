@@ -13,7 +13,7 @@ from __future__ import annotations
 import datetime as dt
 import itertools
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Protocol
 
@@ -23,11 +23,20 @@ from luad.data.dataset import Dataset
 from luad.eval.cv import corrected_se, cross_validate
 
 
+@dataclass
+class Proposal:
+    config: dict
+    reason: str                    # written justification, logged verbatim
+    proposer: str                  # who actually proposed it (e.g. "llm" or "bandit (fallback: ...)")
+    info: dict = field(default_factory=dict)   # e.g. tokens, cost, request id
+
+
 class Proposer(Protocol):
     name: str
 
-    def propose(self, history: list[dict]) -> tuple[dict, str] | None:
-        """Next (config, reason), or None when there is nothing left to try."""
+    def propose(self, history: list[dict], ctx: dict) -> Proposal | None:
+        """Next proposal, or None when there is nothing left to try. ctx: budget, patience, trials_left,
+        streak, best_trial."""
 
 
 class GridProposer:
@@ -40,11 +49,12 @@ class GridProposer:
         order = np.random.default_rng(seed).permutation(len(grid))
         self.queue = [grid[i] for i in order]
 
-    def propose(self, history):
+    def propose(self, history, ctx=None):
         tried = {json.dumps(h["config"], sort_keys=True) for h in history}
         for c in self.queue:
             if json.dumps(c, sort_keys=True) not in tried:
-                return c, f"next untried grid point in seeded order ({len(tried) + 1}/{len(self.queue)})"
+                return Proposal(c, f"next untried grid point in seeded order ({len(tried) + 1}/{len(self.queue)})",
+                                self.name)
         return None
 
 
@@ -66,14 +76,17 @@ def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Prop
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.write_text("")
     for t in range(1, budget + 1):
-        prop = proposer.propose(history)
+        ctx = {"budget": budget, "patience": patience, "trials_left": budget - t + 1, "streak": streak,
+               "best_trial": best["trial"] if best else None, "accept_k": accept_k}
+        prop = proposer.propose(history, ctx)
         if prop is None:
             stop = "search space exhausted"
             break
-        cfg, why = prop
+        cfg = prop.config
         full = {**fixed, **cfg}
         res = cross_validate(lambda: make_model(full), ds, n_jobs=n_jobs)
-        rec = {"trial": t, "config": cfg, "proposer": proposer.name, "proposal_reason": why,
+        rec = {"trial": t, "config": cfg, "proposer": prop.proposer, "proposal_reason": prop.reason,
+               "proposal_info": prop.info,
                "macro_auroc_mean": res["macro_auroc_mean"], "macro_auroc_sd": res["macro_auroc_sd"],
                "balanced_accuracy_mean": res["balanced_accuracy_mean"],
                "balanced_accuracy_sd": res["balanced_accuracy_sd"],

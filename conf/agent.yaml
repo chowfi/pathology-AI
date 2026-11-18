@@ -1,0 +1,41 @@
+# Fusion-strategy search agent. The loop, budget, patience, acceptance rule and folds come from
+# conf/experiments.yaml (search:) so they are identical to the baseline rows.
+
+models: [uni2h, virchow2, hoptimus1]    # the fused model always uses all three + age/sex
+use_meta: true
+
+# Search space. Every knob shared with the baselines (C, l2_normalize, pca, meta_weight) has the same values.
+space:
+  common:
+    l2_normalize: [false, true]
+    pca: [null, 16, 32, 64, 128]          # per model, fitted inside the training fold
+    meta_weight: [1.0, 3.0, 10.0]
+  early:                                  # concatenate, one logistic regression
+    C: [1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
+    balance_blocks: [false, true]
+  late:                                   # one logistic regression per model, then combine
+    C: [1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
+    combine: [mean_prob, mean_logit, learned_weights, weighted_vote, stack]
+    stack_C: [1.0e-3, 1.0e-2, 1.0e-1, 1.0]   # only used by combine=stack
+  gated:                                  # learned per-patient gate over the 3 models
+    hidden: [16, 32, 64, 128]
+    dropout: [0.1, 0.25, 0.5]
+    weight_decay: [1.0e-3, 1.0e-2, 1.0e-1, 1.0]
+    epochs: [100, 200, 400]
+    lr: [1.0e-3, 3.0e-3]
+    n_seeds: [3]
+
+proposer:
+  kind: llm                               # llm | bandit. llm falls back to bandit without a key or on any failure
+  seed: 30                                # bandit fallback
+  ucb_c: 1.0                              # UCB exploration weight (rewards are min-max scaled to [0, 1])
+
+llm:
+  model: claude-opus-5-5
+  effort: medium
+  max_tokens: 16000
+  max_calls_per_run: 60                   # hard cap; after it the bandit proposes
+  max_cost_usd_per_run: 6.0               # hard cap; after it the bandit proposes
+  price_per_mtok: {input: 4.0, output: 20.0, cache_read: 0.20, cache_write: 5.0}   # USD, claude-opus-5-5
+
+results_dir: artifacts/results/agent

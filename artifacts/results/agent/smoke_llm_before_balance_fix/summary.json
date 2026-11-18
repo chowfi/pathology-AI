@@ -1,0 +1,45 @@
+{
+ "run": "smoke_llm",
+ "proposer": "llm",
+ "seed": 30,
+ "budget": 5,
+ "patience": 15,
+ "accept_k": 1.0,
+ "n_trials": 5,
+ "stop_reason": "budget of 5 trials used",
+ "selected_trial": 1,
+ "selected_config": {
+  "models": [
+   "uni2h",
+   "virchow2",
+   "hoptimus1"
+  ],
+  "use_meta": true,
+  "method": "late",
+  "l2_normalize": true,
+  "pca": null,
+  "meta_weight": 1.0,
+  "C": 0.01,
+  "combine": "mean_logit"
+ },
+ "macro_auroc_mean": 0.82708858902063,
+ "macro_auroc_sd": 0.045852834375307246,
+ "balanced_accuracy_mean": 0.4323469387755103,
+ "balanced_accuracy_sd": 0.10972723067418134,
+ "per_class_auroc_mean": [
+  0.8312,
+  0.7789,
+  0.9531,
+  0.7431,
+  0.877,
+  0.7328,
+  0.8735
+ ],
+ "llm_calls": 5,
+ "llm_cost_usd": 0.1116,
+ "proposers_used": {
+  "llm": 5
+ },
+ "started": "2026-11-18T14:49:32",
+ "finished": "2026-11-18T14:50:29"
+}

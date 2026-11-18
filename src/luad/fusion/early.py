@@ -56,8 +56,9 @@ class EarlyFusionLR:
       C             inverse L2 strength of the logistic regression
       l2_normalize  per-slide L2 norm of each embedding block before standardising
       pca           components per embedding block (fitted on the training fold), or None
-      balance_blocks  scale each embedding block by 1/sqrt(n_columns) so every model has the same total variance
-                    (otherwise Virchow2's 2560 columns outweigh the 1536 of the others)
+      balance_blocks  scale each embedding block by sqrt(mean_columns / n_columns) so every model has the same
+                    total variance (otherwise Virchow2's 2560 columns outweigh the 1536 of the others), while the
+                    overall scale, and so the meaning of C, stays the same
       meta_weight   multiply the standardised age/sex columns; >1 means the L2 penalty shrinks them less
     """
 
@@ -72,16 +73,23 @@ class EarlyFusionLR:
     def _scale(self, name: str, Z: np.ndarray) -> np.ndarray:
         if name in SMALL_BLOCKS:
             return Z * self.config.get("meta_weight", 1.0) if name == "meta" else Z
-        return Z / np.sqrt(self._ncols[name]) if self.config.get("balance_blocks", False) else Z
+        if not self.config.get("balance_blocks", False):
+            return Z
+        # equal total variance per model, normalised to the AVERAGE block size, so the overall feature scale
+        # (and therefore the meaning of C) stays the same as without balancing. The first version divided by
+        # sqrt(n_cols), which shrank every block ~40x and silently made C ~2000x stronger (found by the agent's
+        # smoke run, 2026-11-18: balance_blocks + C=0.01 collapsed to AUROC 0.72).
+        emb = [n for n in self._ncols if n not in SMALL_BLOCKS]
+        mean_cols = np.mean([self._ncols[n] for n in emb])
+        return Z * np.sqrt(mean_cols / self._ncols[name])
 
     def _design(self, ds: Dataset, idx: np.ndarray, fit: bool) -> np.ndarray:
-        parts = []
+        Zs = {}
         for b in self.config["blocks"]:
-            Z = self.tf[b].fit_transform(ds.get(b)[idx]) if fit else self.tf[b].transform(ds.get(b)[idx])
+            Zs[b] = self.tf[b].fit_transform(ds.get(b)[idx]) if fit else self.tf[b].transform(ds.get(b)[idx])
             if fit:
-                self._ncols[b] = Z.shape[1]
-            parts.append(self._scale(b, Z))
-        return np.hstack(parts)
+                self._ncols[b] = Zs[b].shape[1]
+        return np.hstack([self._scale(b, Z) for b, Z in Zs.items()])
 
     def fit(self, ds: Dataset, idx: np.ndarray) -> "EarlyFusionLR":
         self.tf = {b: BlockTransform(seed=self.seed, **self._block_cfg(b)) for b in self.config["blocks"]}

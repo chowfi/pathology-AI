@@ -64,3 +64,16 @@ def test_simplex_grid():
 def test_unknown_method_is_rejected():
     with pytest.raises(ValueError):
         build_model({**BASE, "method": "magic"}, CLF)
+
+
+def test_balance_blocks_equalises_models_without_changing_overall_scale():
+    ds = _toy()
+    ds.streams["wide"] = np.random.default_rng(5).standard_normal((len(ds.y), 160))
+    tr, _ = ds.folds[0]
+    cfg = {"models": ["a", "wide"], "use_meta": False, "C": 1.0, "pca": None, "method": "early"}
+    off = build_model({**cfg, "balance_blocks": False}, CLF).fit(ds, tr)
+    on = build_model({**cfg, "balance_blocks": True}, CLF).fit(ds, tr)
+    Z_off, Z_on = off._design(ds, tr, fit=False), on._design(ds, tr, fit=False)
+    var_a, var_w = Z_on[:, :40].var(0).sum(), Z_on[:, 40:].var(0).sum()
+    assert np.isclose(var_a, var_w, rtol=0.05)                         # each model: same total variance
+    assert np.isclose(Z_on.var(0).sum(), Z_off.var(0).sum(), rtol=0.05)  # overall scale (meaning of C) kept
