@@ -1,0 +1,33 @@
+# Model selection on train+val only (167 patients, 15 fixed folds = 5 folds x 3 repeats, artifacts/splits).
+# Every row of the comparison table uses the SAME classifier, metric, folds, budget and acceptance rule.
+
+features_dir: artifacts/features        # mean_<model>.npz from scripts/pool_slides.py
+results_dir: artifacts/results
+models: [uni2h, virchow2, hoptimus1]
+
+classifier:                             # multinomial logistic regression in every row
+  class_weight: balanced                # class imbalance: errors on small classes cost more
+  solver: lbfgs
+  max_iter: 5000
+  tol: 1.0e-4
+
+metric:
+  primary: macro_auroc                  # one-vs-rest, all 7 classes; selection uses this
+  secondary: balanced_accuracy
+
+search:
+  budget: 60                            # max trials per row (identical for every row)
+  patience: 15                          # stop after this many trials in a row with no accepted improvement
+  # A trial replaces the current best only if its mean paired per-fold gain is larger than
+  # accept_k x the corrected standard error of that gain (Nadeau & Bengio 2003: repeated CV folds
+  # overlap, so the naive SE is too small; factor = 1/n_folds + n_val/n_train).
+  accept_k: 1.0
+  seed: 30
+  n_jobs: 15                            # folds evaluated in parallel
+
+# Search space for every single-stream row. Metadata-only and tile-count rows have only C to tune,
+# so their search exhausts its 7 options and stops early; the budget cap is still the same.
+space:
+  C: [1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
+  l2_normalize: [false, true]           # per-slide L2 norm before standardising
+  pca: [null, 16, 32, 64, 128]          # fitted inside each training fold only
