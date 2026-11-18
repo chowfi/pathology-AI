@@ -1,0 +1,61 @@
+# Tile embedding extraction. Every value here was checked against the model card and on real tiles
+# (artifacts/logs/check_preprocessing.txt: card-exact vs this pipeline, cosine 1.00000 for all three).
+# Tiles come from conf/tiling.yaml (224 px at 0.5 um/px); the rescale here uses the same geometry.
+
+models:
+  uni2h:
+    hf_id: MahmoodLab/UNI2-h
+    revision: d517a8dd47902dd7c308b3c36f63bce47e7b9a43
+    timm_kwargs:
+      img_size: 224
+      patch_size: 14
+      depth: 24
+      num_heads: 24
+      init_values: 1.0e-5
+      embed_dim: 1536
+      mlp_ratio: 5.33334          # 2.66667 * 2, as on the model card
+      num_classes: 0
+      no_embed_class: true
+      mlp_layer: SwiGLUPacked
+      act_layer: SiLU
+      reg_tokens: 8
+      dynamic_img_size: true
+    mean: [0.485, 0.456, 0.406]   # ImageNet
+    std: [0.229, 0.224, 0.225]
+    pooling: model_output         # timm head with num_classes=0 returns the CLS token
+    dim: 1536
+
+  virchow2:
+    hf_id: paige-ai/Virchow2
+    revision: 3158645804b69e3f3bc4439d4116edddf0840a72
+    timm_kwargs:
+      mlp_layer: SwiGLUPacked
+      act_layer: SiLU
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+    pooling: cls_plus_mean_patch  # cat(token 0, mean of tokens 5..260); tokens 1-4 are registers (card)
+    n_prefix_tokens: 5
+    dim: 2560                     # first 1280 = CLS only = the Prism2 input
+
+  hoptimus1:
+    hf_id: bioptimus/H-optimus-1
+    revision: 50170265f1240b9b21ad65c6781f5432e438fa68
+    timm_kwargs:
+      init_values: 1.0e-5
+      dynamic_img_size: false
+    mean: [0.707223, 0.578729, 0.703617]   # H-optimus-1's own values, NOT ImageNet
+    std: [0.211883, 0.230117, 0.177517]
+    pooling: model_output
+    dim: 1536
+
+run:
+  batch_size: 128
+  precision: fp16_autocast        # weights fp32, matmuls fp16 (the setting that was checked)
+  max_power_w: 450                # refuse to start above this GPU power limit (PC lost power at 600 W)
+  prefetch_slides: 1              # CPU decodes + rescales the next slide while the GPU works
+
+paths:
+  out_dir: artifacts/embeddings   # <model>/<WSI_ID>.h5 (gitignored, about 26 GB: 11 KB per tile for the 3 models)
+  timing_csv: artifacts/logs/timing.csv
+  gpu_log: artifacts/logs/gpu_log.csv
+  log_file: artifacts/logs/embeddings.log

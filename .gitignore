@@ -6,3 +6,4 @@ artifacts/embeddings/
 artifacts/slides/
 .env
 artifacts/sample_tiles/
+artifacts/masks/*_overlay.jpg

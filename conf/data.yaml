@@ -25,3 +25,15 @@ split:
   # Repeated stratified K-fold over train+val patients, used for all model selection (agent, tuning).
   cv_folds: 5
   cv_repeats: 3
+
+download:
+  # Original Aperio .svs files on the dataset authors' server (same group as the Hugging Face JPG upload).
+  url_template: "https://leelab.kmmu.edu.cn/PathologyRepository/api/download?file={wsi_id}.svs"
+  # Copy only the 4x pyramid level (0.41533 um/px) of the selected slide of each patient.
+  # It is rescaled to 0.5 um/px (the foundation models' 20x) in the tiling step, not here.
+  downsample: 4
+  out_dir: artifacts/slides            # gitignored, about 40 GB
+  manifest_csv: artifacts/metadata/slides_4x_manifest.csv
+  log_file: artifacts/logs/download.log
+  workers: 4                           # parallel slides; 4 connections gave 2.3 MB/s vs 1.3 MB/s for 1
+  chunk_mb: 16

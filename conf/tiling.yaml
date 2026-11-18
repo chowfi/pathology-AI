@@ -1,0 +1,26 @@
+# Tissue mask and tile grid. Read by scripts/make_tiles.py; the embedding step reads the same file,
+# so the rescale it does matches the grid exactly.
+target_mpp: 0.5            # foundation-model scale ("20x"); the 4x level is 0.41533 um/px -> resize x0.83066
+rescale_filter: lanczos    # PIL LANCZOS (antialiased); used by the embedding step for the full-size image
+tile_px: 224               # 224 px at 0.5 um/px = 112 um
+stride_px: 224             # no overlap; regular grid from (0, 0) of the rescaled image
+thumb_factor: 8            # mask works on a thumbnail 8x smaller than the 0.5 um/px image = 4 um/px,
+                           # so one tile is exactly 28x28 thumbnail pixels
+
+mask:
+  median_filter_px: 5        # smooth saturation before Otsu (5 px = 20 um at 4 um/px)
+  min_saturation: 0.05       # floor for the Otsu threshold (0-1 scale) so near-empty slides stay sane
+  closing_diameter_um: 250   # fills alveolar air spaces inside tissue; large background stays background
+  min_object_area_mm2: 0.05  # removes dust and tiny specks (on the closed mask)
+  min_tissue_fraction: 0.5   # keep a tile if >= 50% of it is tissue on the closed mask
+  min_raw_fraction: 0.10     # ... and >= 10% on the raw (unclosed) mask: drops near-empty air-space tiles,
+                             # keeps thin alveolar walls (lepidic / in situ growth). Checked visually on WSI-1.
+
+paths:
+  slides_dir: artifacts/slides
+  tiles_dir: artifacts/tiles            # <WSI_ID>.npz: tile coordinates + settings (small, committed)
+  masks_dir: artifacts/masks            # <WSI_ID>_mask.png (committed), <WSI_ID>_overlay.jpg (QC, gitignored)
+  summary_csv: artifacts/metadata/tiling_summary.csv
+  log_file: artifacts/logs/tiling.log
+
+workers: 3                   # each worker holds one decoded slide (up to ~7 GB RAM)
