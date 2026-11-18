@@ -50,13 +50,13 @@ def main() -> None:
                 continue
             r = run_search(sub, lambda c: EarlyFusionLR(c, clf, seed=seed), GridProposer(space_for(blocks, ecfg), seed),
                            {"blocks": blocks}, s["budget"], s["patience"], s["accept_k"], s["n_jobs"],
-                           log_path=out_dir / f"outer{k}_{row}.jsonl")
+                           log_path=out_dir / f"outer{k}_{row}.jsonl", explore=s.get("explore", 0))
             sel[row] = (r.best, lambda c=r.best["config"], b=blocks: EarlyFusionLR({"blocks": b, **c}, clf, seed=seed))
         space = FusionSpace(acfg["space"])
         fixed = {"models": acfg["models"], "use_meta": acfg["use_meta"]}
         r = run_search(sub, lambda c: build_model(c, clf, seed=seed), BanditProposer(space, seed, acfg["proposer"]["ucb_c"]),
                        fixed, s["budget"], s["patience"], s["accept_k"], s["n_jobs"],
-                       log_path=out_dir / f"outer{k}_fused_bandit.jsonl")
+                       log_path=out_dir / f"outer{k}_fused_bandit.jsonl", explore=s.get("explore", 0))
         sel["fused (agent, bandit)"] = (r.best, lambda c={**fixed, **r.best["config"]}: build_model(c, clf, seed=seed))
         singles = [m for m in ecfg["models"]]
         best_single = max(singles, key=lambda m: sel[m][0]["macro_auroc_mean"])

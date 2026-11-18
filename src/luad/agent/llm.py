@@ -47,7 +47,9 @@ Search space (JSON; knobs a method does not use must be null):
 {space}
 
 Search rules (enforced by code, not by you).
-- Budget {budget} trials. The search stops after {patience} trials in a row without an accepted improvement.
+- Budget {budget} trials. The first {explore} trials are an exploration phase: they never count toward the stop \
+rule, so use them to map the space (every method, and the knobs most likely to matter). After that, the search \
+stops after {patience} trials in a row without an accepted improvement.
 - A trial replaces the current best only if its mean paired per-fold AUROC gain over the best is larger than \
 {accept_k} x the corrected standard error of that gain (Nadeau-Bengio correction for overlapping folds). The \
 threshold is usually 0.005-0.02 AUROC. Gains below it are treated as noise. So chasing tiny differences wastes \
@@ -84,7 +86,8 @@ class LLMProposer:
                  client=None):
         self.space, self.cfg, self.fallback, self.baselines = space, llm_cfg, fallback, baselines_text
         self.system = SYSTEM.format(space=space.describe(), budget=search_cfg["budget"],
-                                    patience=search_cfg["patience"], accept_k=search_cfg["accept_k"])
+                                    patience=search_cfg["patience"], accept_k=search_cfg["accept_k"],
+                                    explore=search_cfg.get("explore", 0))
         self.schema = space.json_schema()
         self.calls, self.cost = 0, 0.0
         self.client = client
@@ -111,10 +114,15 @@ class LLMProposer:
 
     def user_message(self, history, ctx) -> str:
         best = f"trial #{ctx['best_trial']}" if ctx["best_trial"] else "none yet"
+        if ctx.get("exploring"):
+            phase = (f"Exploration phase: trial {ctx['budget'] - ctx['trials_left'] + 1} of {ctx['explore']} "
+                     "(does not count toward the stop rule).")
+        else:
+            phase = (f"Trials in a row without an accepted improvement: {ctx['streak']} "
+                     f"(stop at {ctx['patience']}).")
         return (f"Single-model baselines (same folds, same budget and rules; CV on train+val):\n{self.baselines}\n\n"
                 f"Fusion trials so far:\n{history_table(history)}\n\n"
-                f"Current accepted best: {best}. Trials left: {ctx['trials_left']}. Trials in a row without an "
-                f"accepted improvement: {ctx['streak']} (stop at {ctx['patience']}).\n"
+                f"Current accepted best: {best}. Trials left: {ctx['trials_left']}. {phase}\n"
                 "Propose the next trial.")
 
     def propose(self, history: list[dict], ctx: dict) -> Proposal | None:

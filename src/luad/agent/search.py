@@ -2,7 +2,8 @@
 
 Defences against overfitting the selection (README guardrail):
   * a hard trial budget, the same for every row
-  * early stop after `patience` trials in a row without an accepted improvement
+  * early stop after `patience` trials in a row without an accepted improvement; the first `explore` trials do
+    not count toward patience (exploration phase, added in v2: in v1 trial 1 anchored every run)
   * noise-aware acceptance: a trial replaces the current best only if its mean paired per-fold gain in macro
     AUROC is larger than accept_k x the corrected standard error of that gain
 
@@ -66,8 +67,8 @@ class SearchResult:
 
 
 def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Proposer, fixed: dict,
-               budget: int, patience: int, accept_k: float, n_jobs: int, log_path: Path | None = None
-               ) -> SearchResult:
+               budget: int, patience: int, accept_k: float, n_jobs: int, log_path: Path | None = None,
+               explore: int = 0) -> SearchResult:
     """`fixed` is merged into every proposed config (e.g. the input blocks of the row)."""
     n_val = int(np.mean([len(v) for _, v in ds.folds]))
     n_train = len(ds.y) - n_val
@@ -77,7 +78,8 @@ def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Prop
         log_path.write_text("")
     for t in range(1, budget + 1):
         ctx = {"budget": budget, "patience": patience, "trials_left": budget - t + 1, "streak": streak,
-               "best_trial": best["trial"] if best else None, "accept_k": accept_k}
+               "best_trial": best["trial"] if best else None, "accept_k": accept_k, "explore": explore,
+               "exploring": t <= explore}
         prop = proposer.propose(history, ctx)
         if prop is None:
             stop = "search space exhausted"
@@ -108,7 +110,7 @@ def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Prop
         rec["time"] = dt.datetime.now().isoformat(timespec="seconds")
         if rec["decision"] == "accept":
             best, streak = rec, 0
-        else:
+        elif t > explore:                       # exploration-phase trials do not count toward patience
             streak += 1
         rec["best_trial"] = best["trial"]
         history.append(rec)

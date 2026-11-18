@@ -65,10 +65,11 @@ def main() -> None:
     fixed = {"models": acfg["models"], "use_meta": acfg["use_meta"]}
     t0 = dt.datetime.now()
     res = run_search(ds, lambda c: build_model(c, ecfg["classifier"], seed=ecfg["search"]["seed"]), proposer,
-                     fixed, s["budget"], s["patience"], s["accept_k"], s["n_jobs"], log_path=out / "trials.jsonl")
+                     fixed, s["budget"], s["patience"], s["accept_k"], s["n_jobs"], log_path=out / "trials.jsonl",
+                     explore=s.get("explore", 0))
     b = res.best
     summary = {"run": args.run, "proposer": proposer.name if not (use_llm and proposer.disabled) else "bandit",
-               "seed": seed, "budget": s["budget"], "patience": s["patience"], "accept_k": s["accept_k"],
+               "seed": seed, "budget": s["budget"], "patience": s["patience"], "explore": s.get("explore", 0), "accept_k": s["accept_k"],
                "n_trials": len(res.history), "stop_reason": res.stop_reason,
                "selected_trial": b["trial"], "selected_config": {**fixed, **b["config"]},
                "macro_auroc_mean": b["macro_auroc_mean"], "macro_auroc_sd": b["macro_auroc_sd"],

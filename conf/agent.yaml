@@ -38,4 +38,4 @@ llm:
   max_cost_usd_per_run: 6.0               # hard cap; after it the bandit proposes
   price_per_mtok: {input: 4.0, output: 20.0, cache_read: 0.20, cache_write: 5.0}   # USD, claude-opus-5-5
 
-results_dir: artifacts/results/agent
+results_dir: artifacts/results/v2/agent

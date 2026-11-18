@@ -2,7 +2,7 @@
 # Every row of the comparison table uses the SAME classifier, metric, folds, budget and acceptance rule.
 
 features_dir: artifacts/features        # mean_<model>.npz from scripts/pool_slides.py
-results_dir: artifacts/results
+results_dir: artifacts/results/v2           # v1 (no exploration phase) is kept in artifacts/results/v1
 models: [uni2h, virchow2, hoptimus1]
 
 classifier:                             # multinomial logistic regression in every row
@@ -18,6 +18,9 @@ metric:
 search:
   budget: 60                            # max trials per row (identical for every row)
   patience: 15                          # stop after this many trials in a row with no accepted improvement
+  # v2: the first `explore` trials do not count toward patience. In v1 trial 1 was accepted by default and every
+  # run stopped at 16-19 of 60 trials, before all methods/knobs were explored (see artifacts/results/v1).
+  explore: 10
   # A trial replaces the current best only if its mean paired per-fold gain is larger than
   # accept_k x the corrected standard error of that gain (Nadeau & Bengio 2003: repeated CV folds
   # overlap, so the naive SE is too small; factor = 1/n_folds + n_val/n_train).

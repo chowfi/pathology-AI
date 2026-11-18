@@ -50,3 +50,11 @@ def test_search_respects_budget_patience_and_acceptance(tmp_path):
     r3 = run_search(ds, lambda c: EarlyFusionLR(c, CLF), GridProposer(space, 0), {"blocks": ["noise"]},
                     budget=60, patience=2, accept_k=1e6, n_jobs=1)
     assert len(r3.history) == 3 and "without an accepted" in r3.stop_reason
+
+
+def test_exploration_trials_do_not_count_toward_patience():
+    ds = _toy()
+    space = {"C": [1e-4, 1e-3, 1e-2, 0.1, 1.0, 10.0]}
+    r = run_search(ds, lambda c: EarlyFusionLR(c, CLF), GridProposer(space, 0), {"blocks": ["noise"]},
+                   budget=60, patience=2, accept_k=1e6, n_jobs=1, explore=4)
+    assert len(r.history) == 6 and "without an accepted" in r.stop_reason    # 4 free trials + 2 counted
