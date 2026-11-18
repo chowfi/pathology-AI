@@ -1,0 +1,80 @@
+{
+  "seed": 30,
+  "created": "2026-11-17",
+  "code_commit": "f20ee148d66ec37e92f8b56d97b8e233ab7c1029",
+  "input_metadata_csv": "CLWD.csv",
+  "input_metadata_sha256": "8d0e97f63fb22b8b7e8b34c31de4b700a5c319a9247080212bf71eec1cbc22f0",
+  "split_unit": "patient (SampleNumber)",
+  "stratified_by": "subtype label",
+  "fractions": {
+    "train": 0.7,
+    "val": 0.1,
+    "test": 0.2
+  },
+  "cv": {
+    "folds": 5,
+    "repeats": 3,
+    "patients": "train+val"
+  },
+  "policies": {
+    "slide_selection": "lowest_wsi_number",
+    "conflicting_label_policy": "selected_slide_label",
+    "forbidden_feature_columns": [
+      "Pathological_Diagnosis"
+    ]
+  },
+  "flagged_patients": {
+    "conflicting_labels": [
+      "8225322",
+      "8240634",
+      "8245975",
+      "8248415",
+      "8248805"
+    ],
+    "age_mismatch_across_slides": [
+      "8377886"
+    ]
+  },
+  "n_patients": {
+    "train": 146,
+    "val": 21,
+    "test": 42
+  },
+  "class_counts": {
+    "Acinar": {
+      "train": 23,
+      "val": 3,
+      "test": 7
+    },
+    "Cribriform": {
+      "train": 11,
+      "val": 1,
+      "test": 3
+    },
+    "In situ": {
+      "train": 31,
+      "val": 5,
+      "test": 9
+    },
+    "Lepidic": {
+      "train": 15,
+      "val": 2,
+      "test": 4
+    },
+    "Micropapillary": {
+      "train": 18,
+      "val": 3,
+      "test": 5
+    },
+    "Papillary": {
+      "train": 28,
+      "val": 4,
+      "test": 8
+    },
+    "Solid": {
+      "train": 20,
+      "val": 3,
+      "test": 6
+    }
+  }
+}

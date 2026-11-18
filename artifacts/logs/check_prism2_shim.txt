@@ -1,0 +1,13 @@
+[A] shim vs reference attention
+  [A] torch.float32   max abs diff vs reference = 1.91e-06  (output scale ~8.22e-02)
+  [A] torch.bfloat16  max abs diff vs reference = 7.23e-03  (output scale ~8.40e-02)
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [03:56<11:50, 236.86s/it]Fetching 4 files:  50%|█████     | 2/4 [04:42<04:42, 141.43s/it]Fetching 4 files:  75%|███████▌  | 3/4 [05:20<01:46, 106.78s/it]Fetching 4 files: 100%|██████████| 4/4 [05:21<00:00, 80.31s/it] Fetching 4 files: 100%|██████████| 4/4 [05:21<00:00, 80.31s/it]
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 470.94it/s]
+
+[B] Prism2 loaded; slides ['WSI-1', 'WSI-346', 'WSI-361'] with [16, 12, 8] tiles
+  shape=(3, 2560)  NaN=False  norm=[50.500343322753906, 50.50087356567383, 50.501991271972656]
+[C] alone vs in padded batch: cosine [0.99999, 0.99999, 0.99999]
+[D] cosine between different slides:
+[[1.    0.81  0.66 ]
+ [0.81  1.    0.475]
+ [0.66  0.475 1.   ]]

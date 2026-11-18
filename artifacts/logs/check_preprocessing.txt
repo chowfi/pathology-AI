@@ -1,0 +1,29 @@
+48 tiles; GPU power limit 450 W; logging to artifacts/logs/gpu_log.csv
+=== UNI2-h  params=681M
+  timm cfg: mean=[0.485, 0.456, 0.406] std=[0.229, 0.224, 0.225] input=[3, 224, 224]
+  card transform steps: ['Resize', 'CenterCrop', 'MaybeToTensor', 'Normalize']
+  dim=1536  NaN=False  norm mean=16.55 sd=1.14
+  [1] card vs ours cosine: min=1.00000 mean=1.00000
+  [2] wrong normalization vs correct: cosine mean=0.874 min=0.604
+  [3] same tile flipped cosine=0.924  vs different tiles=0.502
+  [4] speed fp16 batch 64: 383 tiles/s
+Virchow2 raw output (1, 261, 1280) (card: 1 x 261 x 1280 = CLS + 4 register + 256 patch)
+=== Virchow2  params=631M
+  timm cfg: mean=[0.485, 0.456, 0.406] std=[0.229, 0.224, 0.225] input=[3, 224, 224]
+  card transform steps: ['Resize', 'CenterCrop', 'MaybeToTensor', 'Normalize']
+  dim=2560  NaN=False  norm mean=48.29 sd=4.62
+  [1] card vs ours cosine: min=1.00000 mean=1.00000
+  [2] wrong normalization vs correct: cosine mean=0.915 min=0.802
+  [3] same tile flipped cosine=0.996  vs different tiles=0.542
+  [4] speed fp16 batch 64: 411 tiles/s
+  [5] Prism2 input (CLS only) == first 1280 of our 2560 vector? max diff=0.00e+00
+  [6] trap: register tokens in the mean -> cosine vs correct 1.0000
+=== H-optimus-1  params=1135M
+  timm cfg: mean=[0.707223, 0.578729, 0.703617] std=[0.211883, 0.230117, 0.177517] input=[3, 224, 224]
+  card transform steps: ['ToTensor', 'Normalize']
+  dim=1536  NaN=False  norm mean=33.98 sd=2.72
+  [1] card vs ours cosine: min=1.00000 mean=1.00000
+  [2] wrong normalization vs correct: cosine mean=0.956 min=0.884
+  [3] same tile flipped cosine=0.982  vs different tiles=0.463
+  [4] speed fp16 batch 64: 234 tiles/s
+GPU log: artifacts/logs/gpu_log.csv

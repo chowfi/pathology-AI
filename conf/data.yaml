@@ -1,0 +1,27 @@
+# Cohort selection and data split. Every script reads this file; change values here, not in code.
+seed: 30
+
+paths:
+  metadata_csv: CLWD.csv
+  slide_scale_csv: artifacts/metadata/slide_scale.csv
+  splits_dir: artifacts/splits
+  test_access_log: artifacts/logs/test_access.log
+
+cohort:
+  label_column: "Tumor Subtype"
+  # One slide per patient: the lowest WSI number, compared as an integer ("WSI-35" < "WSI-103").
+  slide_selection: lowest_wsi_number
+  # Patients whose slides carry different subtypes get the label of the SELECTED slide,
+  # so the image the model sees and its label always match. They are flagged for a sensitivity analysis.
+  conflicting_label_policy: selected_slide_label
+  # SampleNumber is the patient key. 8377886 appears with ages 68 and 69 (same sex, diagnosis, subtype):
+  # it is treated as ONE patient; age is taken from the selected slide.
+  # Columns that must never be model inputs (Pathological_Diagnosis encodes the In situ label).
+  forbidden_feature_columns: ["Pathological_Diagnosis"]
+  expected_n_patients: 209
+
+split:
+  fractions: {train: 0.70, val: 0.10, test: 0.20}
+  # Repeated stratified K-fold over train+val patients, used for all model selection (agent, tuning).
+  cv_folds: 5
+  cv_repeats: 3
