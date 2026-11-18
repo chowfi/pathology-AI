@@ -1,0 +1,45 @@
+{
+ "run": "repeat_llm_2",
+ "proposer": "llm",
+ "seed": 30,
+ "budget": 60,
+ "patience": 15,
+ "accept_k": 1.0,
+ "n_trials": 16,
+ "stop_reason": "15 trials in a row without an accepted improvement",
+ "selected_trial": 1,
+ "selected_config": {
+  "models": [
+   "uni2h",
+   "virchow2",
+   "hoptimus1"
+  ],
+  "use_meta": true,
+  "method": "late",
+  "l2_normalize": true,
+  "pca": null,
+  "meta_weight": 1.0,
+  "C": 0.01,
+  "combine": "mean_prob"
+ },
+ "macro_auroc_mean": 0.8250888479896129,
+ "macro_auroc_sd": 0.04564271142867242,
+ "balanced_accuracy_mean": 0.43212018140589575,
+ "balanced_accuracy_sd": 0.1089335615821875,
+ "per_class_auroc_mean": [
+  0.8254,
+  0.777,
+  0.9534,
+  0.7364,
+  0.8723,
+  0.7353,
+  0.8759
+ ],
+ "llm_calls": 16,
+ "llm_cost_usd": 0.3837,
+ "proposers_used": {
+  "llm": 16
+ },
+ "started": "2026-11-18T15:04:37",
+ "finished": "2026-11-18T15:07:52"
+}

@@ -27,6 +27,17 @@ class Dataset:
     folds: list[tuple[np.ndarray, np.ndarray]] = field(default_factory=list)   # (train_idx, val_idx)
     fold_ids: list[tuple[int, int]] = field(default_factory=list)              # (repeat, fold)
 
+    def subset(self, idx: np.ndarray, n_folds: int, n_repeats: int, seed: int) -> "Dataset":
+        """The patients `idx` with NEW repeated stratified folds made only from them (for nested CV)."""
+        from sklearn.model_selection import RepeatedStratifiedKFold
+        sub = Dataset([self.wsi_ids[i] for i in idx], self.y[idx], {k: v[idx] for k, v in self.streams.items()},
+                      self.meta[idx], self.n_tiles[idx])
+        rskf = RepeatedStratifiedKFold(n_splits=n_folds, n_repeats=n_repeats, random_state=seed)
+        for k, (tr, va) in enumerate(rskf.split(np.zeros(len(idx)), sub.y)):
+            sub.folds.append((tr, va))
+            sub.fold_ids.append((k // n_folds, k % n_folds))
+        return sub
+
     def get(self, name: str) -> np.ndarray:
         """A named input block: a model stream, 'meta' or 'tile_count' (log10 number of tiles)."""
         if name == "meta":

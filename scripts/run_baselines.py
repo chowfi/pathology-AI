@@ -23,16 +23,9 @@ import pandas as pd
 from luad.agent.search import GridProposer, run_search
 from luad.config import load_config, repo_path
 from luad.data.dataset import CLASSES, load_dev_set
+from luad.eval.baselines import rows_for, space_for
 from luad.fusion.early import EarlyFusionLR
 from luad.utils.seed import seed_everything
-
-
-def rows_for(models: list[str]) -> dict[str, list[str]]:
-    rows = {"meta": ["meta"]}
-    rows |= {m: [m] for m in models}
-    rows |= {f"{m}+meta": [m, "meta"] for m in models}
-    rows["tile_count"] = ["tile_count"]
-    return rows
 
 
 def main() -> None:
@@ -49,10 +42,7 @@ def main() -> None:
     summary = []
     for row in chosen:
         blocks = all_rows[row]
-        embedding = any(b in cfg["models"] for b in blocks)
-        space = dict(cfg["space"]) if embedding else {"C": cfg["space"]["C"]}
-        if not (embedding and "meta" in blocks):
-            space.pop("meta_weight", None)
+        space = space_for(blocks, cfg)
         res = run_search(ds, lambda c: EarlyFusionLR(c, cfg["classifier"], seed=s["seed"]),
                          GridProposer(space, s["seed"]), {"blocks": blocks}, s["budget"], s["patience"],
                          s["accept_k"], s["n_jobs"], log_path=out / f"{row}.jsonl")
