@@ -31,3 +31,4 @@ space:
   C: [1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
   l2_normalize: [false, true]           # per-slide L2 norm before standardising
   pca: [null, 16, 32, 64, 128]          # fitted inside each training fold only
+  meta_weight: [1.0, 3.0, 10.0]         # only for rows with age/sex AND an embedding (same knob as in fusion)

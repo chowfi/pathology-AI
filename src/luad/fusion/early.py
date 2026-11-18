@@ -45,20 +45,48 @@ class BlockTransform:
         return Z
 
 
+SMALL_BLOCKS = ("meta", "tile_count")          # 1-2 columns: standardise only, never PCA
+
+
 class EarlyFusionLR:
-    """config: blocks (list of input names), C, l2_normalize, pca (applied to embedding blocks, not to 'meta')."""
+    """Join the transformed blocks, then one logistic regression.
+
+    config keys:
+      blocks        input names, e.g. ["uni2h", "virchow2", "hoptimus1", "meta"]
+      C             inverse L2 strength of the logistic regression
+      l2_normalize  per-slide L2 norm of each embedding block before standardising
+      pca           components per embedding block (fitted on the training fold), or None
+      balance_blocks  scale each embedding block by 1/sqrt(n_columns) so every model has the same total variance
+                    (otherwise Virchow2's 2560 columns outweigh the 1536 of the others)
+      meta_weight   multiply the standardised age/sex columns; >1 means the L2 penalty shrinks them less
+    """
 
     def __init__(self, config: dict, clf_cfg: dict, seed: int = 0):
         self.config, self.clf_cfg, self.seed = config, clf_cfg, seed
 
     def _block_cfg(self, name: str) -> dict:
-        if name in ("meta", "tile_count"):          # 1-2 columns: standardise only
+        if name in SMALL_BLOCKS:
             return {}
         return {"l2_normalize": self.config.get("l2_normalize", False), "pca": self.config.get("pca")}
 
+    def _scale(self, name: str, Z: np.ndarray) -> np.ndarray:
+        if name in SMALL_BLOCKS:
+            return Z * self.config.get("meta_weight", 1.0) if name == "meta" else Z
+        return Z / np.sqrt(self._ncols[name]) if self.config.get("balance_blocks", False) else Z
+
+    def _design(self, ds: Dataset, idx: np.ndarray, fit: bool) -> np.ndarray:
+        parts = []
+        for b in self.config["blocks"]:
+            Z = self.tf[b].fit_transform(ds.get(b)[idx]) if fit else self.tf[b].transform(ds.get(b)[idx])
+            if fit:
+                self._ncols[b] = Z.shape[1]
+            parts.append(self._scale(b, Z))
+        return np.hstack(parts)
+
     def fit(self, ds: Dataset, idx: np.ndarray) -> "EarlyFusionLR":
         self.tf = {b: BlockTransform(seed=self.seed, **self._block_cfg(b)) for b in self.config["blocks"]}
-        Z = np.hstack([self.tf[b].fit_transform(ds.get(b)[idx]) for b in self.config["blocks"]])
+        self._ncols = {}
+        Z = self._design(ds, idx, fit=True)
         self.clf = LogisticRegression(C=self.config["C"], random_state=self.seed, **self.clf_cfg)
         self.clf.fit(Z, ds.y[idx])
         if len(self.clf.classes_) != 7:
@@ -66,5 +94,4 @@ class EarlyFusionLR:
         return self
 
     def predict_proba(self, ds: Dataset, idx: np.ndarray) -> np.ndarray:
-        Z = np.hstack([self.tf[b].transform(ds.get(b)[idx]) for b in self.config["blocks"]])
-        return self.clf.predict_proba(Z)
+        return self.clf.predict_proba(self._design(ds, idx, fit=False))

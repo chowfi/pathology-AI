@@ -50,7 +50,9 @@ def main() -> None:
     for row in chosen:
         blocks = all_rows[row]
         embedding = any(b in cfg["models"] for b in blocks)
-        space = cfg["space"] if embedding else {"C": cfg["space"]["C"]}
+        space = dict(cfg["space"]) if embedding else {"C": cfg["space"]["C"]}
+        if not (embedding and "meta" in blocks):
+            space.pop("meta_weight", None)
         res = run_search(ds, lambda c: EarlyFusionLR(c, cfg["classifier"], seed=s["seed"]),
                          GridProposer(space, s["seed"]), {"blocks": blocks}, s["budget"], s["patience"],
                          s["accept_k"], s["n_jobs"], log_path=out / f"{row}.jsonl")
