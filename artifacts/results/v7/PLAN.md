@@ -112,3 +112,15 @@ it is recorded here first.
   are expected to be within noise. Everything is reported, whatever the result. No change after the test is seen.
 - Before the real run: a dry run (dev patients only: CV fold 0 as a stand-in test set, cross-fit seed index 0)
   must reproduce the logged fold-0 CV scores of every row and the cached fold-0 vectors.
+
+## Test outcome (run once, 2026-11-19 21:55, commit cfc4784; artifacts/results/final)
+
+- Test macro AUROC [95% CI]: fused + meta 0.918 [0.866, 0.960], the highest of all rows. Fused - row: UNI2-h
+  +0.038, Virchow2 +0.045, H-optimus-1 +0.029 (paired CIs above 0); best single + meta (UNI2-h + meta, 0.910)
+  +0.007 [-0.017, 0.033]: within noise.
+- Test balanced accuracy: fused + meta 0.568 [0.429, 0.720]; UNI2-h + meta 0.642, UNI2-h 0.589 are higher
+  (fused - row -0.074 and -0.021, CIs include 0); fused is higher than H-optimus-1 (0.538) and Virchow2 (0.492).
+- So on the test set the fused model beats every single-model row on macro AUROC, but not on balanced accuracy.
+  With 42 patients (3-9 per class) one patient moves a class recall by 11-33 points; fused is right on 26 of 42
+  patients, UNI2-h + meta on 29.
+- After the run: the test access log path was made repo-relative (privacy); time and reason unchanged.

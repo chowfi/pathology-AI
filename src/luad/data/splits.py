@@ -77,6 +77,13 @@ def sha256(path: str | Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def _repo_relative(path: str | Path) -> str:
+    """The path relative to the repo root when it is inside the repo (logs must not record local home paths)."""
+    from luad.config import repo_path
+    p, root = Path(path).resolve(), repo_path(".").resolve()
+    return str(p.relative_to(root)) if p.is_relative_to(root) else p.name
+
+
 def load_split(split_csv: str | Path, include_test: bool = False, test_access_log: str | Path | None = None,
                reason: str = "") -> pd.DataFrame:
     """Load the committed split. Test rows are dropped unless include_test=True, which is logged.
@@ -93,6 +100,6 @@ def load_split(split_csv: str | Path, include_test: bool = False, test_access_lo
         log.parent.mkdir(parents=True, exist_ok=True)
         with log.open("a") as f:
             f.write(json.dumps({"time": dt.datetime.now().isoformat(timespec="seconds"),
-                                "split_file": str(split_csv),
+                                "split_file": _repo_relative(split_csv),   # no local home paths in the log
                                 "reason": reason}) + "\n")
     return df

@@ -1,0 +1,117 @@
+{
+ "mode": "test",
+ "finished": "2026-11-19T21:57:32",
+ "seconds": 138.6,
+ "n_fit": 167,
+ "n_scored": 42,
+ "crossfit_seed": 15030,
+ "classifier_seed": 30,
+ "bootstrap": 2000,
+ "bootstrap_seed": 30,
+ "best_single_meta": "uni2h+meta",
+ "fused": {
+  "run": "main_llm",
+  "trial": 8,
+  "config": {
+   "models": [
+    "uni2h",
+    "virchow2",
+    "hoptimus1"
+   ],
+   "use_meta": true,
+   "members": {
+    "uni2h": {
+     "C": 0.001,
+     "l2_normalize": true,
+     "pca": null,
+     "meta_weight": 10.0
+    },
+    "virchow2": {
+     "C": 0.0001,
+     "l2_normalize": false,
+     "pca": null,
+     "meta_weight": 1.0
+    },
+    "hoptimus1": {
+     "C": 0.0001,
+     "l2_normalize": false,
+     "pca": null,
+     "meta_weight": 1.0
+    }
+   },
+   "method": "early",
+   "l2_normalize": true,
+   "pca": null,
+   "meta_weight": 3.0,
+   "C": 0.0001,
+   "balance_blocks": true
+  }
+ },
+ "rows": {
+  "meta": {
+   "trial": 2,
+   "config": {
+    "C": 1.0
+   }
+  },
+  "uni2h": {
+   "trial": 4,
+   "config": {
+    "C": 0.01,
+    "l2_normalize": true,
+    "pca": 32
+   }
+  },
+  "virchow2": {
+   "trial": 18,
+   "config": {
+    "C": 0.0001,
+    "l2_normalize": true,
+    "pca": 32
+   }
+  },
+  "hoptimus1": {
+   "trial": 14,
+   "config": {
+    "C": 0.0001,
+    "l2_normalize": false,
+    "pca": 64
+   }
+  },
+  "uni2h+meta": {
+   "trial": 15,
+   "config": {
+    "C": 0.001,
+    "l2_normalize": true,
+    "pca": null,
+    "meta_weight": 10.0
+   }
+  },
+  "virchow2+meta": {
+   "trial": 24,
+   "config": {
+    "C": 0.0001,
+    "l2_normalize": false,
+    "pca": null,
+    "meta_weight": 1.0
+   }
+  },
+  "hoptimus1+meta": {
+   "trial": 24,
+   "config": {
+    "C": 0.0001,
+    "l2_normalize": false,
+    "pca": null,
+    "meta_weight": 1.0
+   }
+  }
+ },
+ "git_commit": "cfc4784717cc8c49241440485bd1c88330e54eb3",
+ "uncommitted_tracked_changes": false,
+ "sha256": {
+  "conf/experiments.yaml": "ba199754b6b208c088768c9a4b69f65c3c67a16f48a9740031e45451dadfed78",
+  "conf/agent.yaml": "6f96c21ea7f7752aa5461d02a1e594c3c03e2e8ce4758a3544db8f515db24086",
+  "artifacts/results/v7/baselines/summary.csv": "9ac452fdfcf298a7abcd52ca428531c6ff73a10c43c1b5284d1117b0a457a31a",
+  "artifacts/results/v7/agent/main_llm/summary.json": "635ad5e406711f64ac62f306922f7c2a06157964806386ed87dc4fb742561b24"
+ }
+}
