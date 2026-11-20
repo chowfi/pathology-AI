@@ -7,3 +7,10 @@ artifacts/slides/
 .env
 artifacts/sample_tiles/
 artifacts/masks/*_overlay.jpg
+
+# console logs of runs: they can contain local paths; the results are in trials.jsonl / summary files
+artifacts/results/**/*_stdout.txt
+# large ABMIL / joint-ABMIL caches, rebuilt by scripts/abmil_features.py and scripts/nested_cv.py
+artifacts/features/abmil_*_devfolds.npz
+artifacts/features/joint_abmil_devfolds.npz
+artifacts/features/abmil_nested/

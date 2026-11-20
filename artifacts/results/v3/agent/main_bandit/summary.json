@@ -1,0 +1,46 @@
+{
+ "run": "main_bandit",
+ "proposer": "bandit",
+ "seed": 30,
+ "budget": 60,
+ "patience": 15,
+ "explore": 10,
+ "accept_k": 1.0,
+ "n_trials": 33,
+ "stop_reason": "15 trials in a row without an accepted improvement",
+ "selected_trial": 18,
+ "selected_config": {
+  "models": [
+   "uni2h",
+   "virchow2",
+   "hoptimus1"
+  ],
+  "use_meta": true,
+  "method": "late",
+  "l2_normalize": false,
+  "pca": 64,
+  "meta_weight": 1.0,
+  "C": 0.001,
+  "combine": "mean_logit"
+ },
+ "macro_auroc_mean": 0.85980688868813,
+ "macro_auroc_sd": 0.03367148404149265,
+ "balanced_accuracy_mean": 0.5018253968253968,
+ "balanced_accuracy_sd": 0.10007423190571021,
+ "per_class_auroc_mean": [
+  0.841,
+  0.9116,
+  0.9795,
+  0.7796,
+  0.8845,
+  0.7387,
+  0.8838
+ ],
+ "llm_calls": 0,
+ "llm_cost_usd": 0.0,
+ "proposers_used": {
+  "bandit": 33
+ },
+ "started": "2026-11-18T17:24:14",
+ "finished": "2026-11-18T17:25:29"
+}

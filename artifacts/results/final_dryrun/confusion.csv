@@ -1,0 +1,393 @@
+row,true,pred,count
+meta,Acinar,Acinar,1
+meta,Acinar,Cribriform,2
+meta,Acinar,In situ,1
+meta,Acinar,Lepidic,0
+meta,Acinar,Micropapillary,1
+meta,Acinar,Papillary,0
+meta,Acinar,Solid,1
+meta,Cribriform,Acinar,0
+meta,Cribriform,Cribriform,0
+meta,Cribriform,In situ,0
+meta,Cribriform,Lepidic,0
+meta,Cribriform,Micropapillary,0
+meta,Cribriform,Papillary,1
+meta,Cribriform,Solid,1
+meta,In situ,Acinar,4
+meta,In situ,Cribriform,1
+meta,In situ,In situ,1
+meta,In situ,Lepidic,0
+meta,In situ,Micropapillary,1
+meta,In situ,Papillary,0
+meta,In situ,Solid,0
+meta,Lepidic,Acinar,1
+meta,Lepidic,Cribriform,0
+meta,Lepidic,In situ,0
+meta,Lepidic,Lepidic,0
+meta,Lepidic,Micropapillary,1
+meta,Lepidic,Papillary,1
+meta,Lepidic,Solid,1
+meta,Micropapillary,Acinar,0
+meta,Micropapillary,Cribriform,2
+meta,Micropapillary,In situ,2
+meta,Micropapillary,Lepidic,0
+meta,Micropapillary,Micropapillary,0
+meta,Micropapillary,Papillary,0
+meta,Micropapillary,Solid,0
+meta,Papillary,Acinar,1
+meta,Papillary,Cribriform,0
+meta,Papillary,In situ,0
+meta,Papillary,Lepidic,0
+meta,Papillary,Micropapillary,3
+meta,Papillary,Papillary,3
+meta,Papillary,Solid,0
+meta,Solid,Acinar,0
+meta,Solid,Cribriform,2
+meta,Solid,In situ,0
+meta,Solid,Lepidic,0
+meta,Solid,Micropapillary,2
+meta,Solid,Papillary,0
+meta,Solid,Solid,0
+uni2h,Acinar,Acinar,4
+uni2h,Acinar,Cribriform,1
+uni2h,Acinar,In situ,0
+uni2h,Acinar,Lepidic,0
+uni2h,Acinar,Micropapillary,0
+uni2h,Acinar,Papillary,1
+uni2h,Acinar,Solid,0
+uni2h,Cribriform,Acinar,0
+uni2h,Cribriform,Cribriform,2
+uni2h,Cribriform,In situ,0
+uni2h,Cribriform,Lepidic,0
+uni2h,Cribriform,Micropapillary,0
+uni2h,Cribriform,Papillary,0
+uni2h,Cribriform,Solid,0
+uni2h,In situ,Acinar,0
+uni2h,In situ,Cribriform,0
+uni2h,In situ,In situ,6
+uni2h,In situ,Lepidic,0
+uni2h,In situ,Micropapillary,0
+uni2h,In situ,Papillary,1
+uni2h,In situ,Solid,0
+uni2h,Lepidic,Acinar,1
+uni2h,Lepidic,Cribriform,0
+uni2h,Lepidic,In situ,0
+uni2h,Lepidic,Lepidic,2
+uni2h,Lepidic,Micropapillary,0
+uni2h,Lepidic,Papillary,1
+uni2h,Lepidic,Solid,0
+uni2h,Micropapillary,Acinar,0
+uni2h,Micropapillary,Cribriform,1
+uni2h,Micropapillary,In situ,0
+uni2h,Micropapillary,Lepidic,0
+uni2h,Micropapillary,Micropapillary,2
+uni2h,Micropapillary,Papillary,1
+uni2h,Micropapillary,Solid,0
+uni2h,Papillary,Acinar,4
+uni2h,Papillary,Cribriform,1
+uni2h,Papillary,In situ,0
+uni2h,Papillary,Lepidic,0
+uni2h,Papillary,Micropapillary,1
+uni2h,Papillary,Papillary,1
+uni2h,Papillary,Solid,0
+uni2h,Solid,Acinar,0
+uni2h,Solid,Cribriform,1
+uni2h,Solid,In situ,0
+uni2h,Solid,Lepidic,0
+uni2h,Solid,Micropapillary,1
+uni2h,Solid,Papillary,0
+uni2h,Solid,Solid,2
+virchow2,Acinar,Acinar,2
+virchow2,Acinar,Cribriform,2
+virchow2,Acinar,In situ,0
+virchow2,Acinar,Lepidic,2
+virchow2,Acinar,Micropapillary,0
+virchow2,Acinar,Papillary,0
+virchow2,Acinar,Solid,0
+virchow2,Cribriform,Acinar,0
+virchow2,Cribriform,Cribriform,2
+virchow2,Cribriform,In situ,0
+virchow2,Cribriform,Lepidic,0
+virchow2,Cribriform,Micropapillary,0
+virchow2,Cribriform,Papillary,0
+virchow2,Cribriform,Solid,0
+virchow2,In situ,Acinar,0
+virchow2,In situ,Cribriform,0
+virchow2,In situ,In situ,5
+virchow2,In situ,Lepidic,2
+virchow2,In situ,Micropapillary,0
+virchow2,In situ,Papillary,0
+virchow2,In situ,Solid,0
+virchow2,Lepidic,Acinar,0
+virchow2,Lepidic,Cribriform,0
+virchow2,Lepidic,In situ,1
+virchow2,Lepidic,Lepidic,3
+virchow2,Lepidic,Micropapillary,0
+virchow2,Lepidic,Papillary,0
+virchow2,Lepidic,Solid,0
+virchow2,Micropapillary,Acinar,0
+virchow2,Micropapillary,Cribriform,0
+virchow2,Micropapillary,In situ,0
+virchow2,Micropapillary,Lepidic,0
+virchow2,Micropapillary,Micropapillary,3
+virchow2,Micropapillary,Papillary,1
+virchow2,Micropapillary,Solid,0
+virchow2,Papillary,Acinar,1
+virchow2,Papillary,Cribriform,1
+virchow2,Papillary,In situ,1
+virchow2,Papillary,Lepidic,3
+virchow2,Papillary,Micropapillary,0
+virchow2,Papillary,Papillary,0
+virchow2,Papillary,Solid,1
+virchow2,Solid,Acinar,0
+virchow2,Solid,Cribriform,1
+virchow2,Solid,In situ,0
+virchow2,Solid,Lepidic,0
+virchow2,Solid,Micropapillary,0
+virchow2,Solid,Papillary,0
+virchow2,Solid,Solid,3
+hoptimus1,Acinar,Acinar,5
+hoptimus1,Acinar,Cribriform,1
+hoptimus1,Acinar,In situ,0
+hoptimus1,Acinar,Lepidic,0
+hoptimus1,Acinar,Micropapillary,0
+hoptimus1,Acinar,Papillary,0
+hoptimus1,Acinar,Solid,0
+hoptimus1,Cribriform,Acinar,0
+hoptimus1,Cribriform,Cribriform,2
+hoptimus1,Cribriform,In situ,0
+hoptimus1,Cribriform,Lepidic,0
+hoptimus1,Cribriform,Micropapillary,0
+hoptimus1,Cribriform,Papillary,0
+hoptimus1,Cribriform,Solid,0
+hoptimus1,In situ,Acinar,0
+hoptimus1,In situ,Cribriform,0
+hoptimus1,In situ,In situ,6
+hoptimus1,In situ,Lepidic,1
+hoptimus1,In situ,Micropapillary,0
+hoptimus1,In situ,Papillary,0
+hoptimus1,In situ,Solid,0
+hoptimus1,Lepidic,Acinar,2
+hoptimus1,Lepidic,Cribriform,0
+hoptimus1,Lepidic,In situ,2
+hoptimus1,Lepidic,Lepidic,0
+hoptimus1,Lepidic,Micropapillary,0
+hoptimus1,Lepidic,Papillary,0
+hoptimus1,Lepidic,Solid,0
+hoptimus1,Micropapillary,Acinar,0
+hoptimus1,Micropapillary,Cribriform,1
+hoptimus1,Micropapillary,In situ,0
+hoptimus1,Micropapillary,Lepidic,0
+hoptimus1,Micropapillary,Micropapillary,1
+hoptimus1,Micropapillary,Papillary,1
+hoptimus1,Micropapillary,Solid,1
+hoptimus1,Papillary,Acinar,5
+hoptimus1,Papillary,Cribriform,1
+hoptimus1,Papillary,In situ,0
+hoptimus1,Papillary,Lepidic,0
+hoptimus1,Papillary,Micropapillary,1
+hoptimus1,Papillary,Papillary,0
+hoptimus1,Papillary,Solid,0
+hoptimus1,Solid,Acinar,0
+hoptimus1,Solid,Cribriform,0
+hoptimus1,Solid,In situ,0
+hoptimus1,Solid,Lepidic,0
+hoptimus1,Solid,Micropapillary,0
+hoptimus1,Solid,Papillary,0
+hoptimus1,Solid,Solid,4
+uni2h+meta,Acinar,Acinar,4
+uni2h+meta,Acinar,Cribriform,1
+uni2h+meta,Acinar,In situ,0
+uni2h+meta,Acinar,Lepidic,0
+uni2h+meta,Acinar,Micropapillary,0
+uni2h+meta,Acinar,Papillary,1
+uni2h+meta,Acinar,Solid,0
+uni2h+meta,Cribriform,Acinar,0
+uni2h+meta,Cribriform,Cribriform,2
+uni2h+meta,Cribriform,In situ,0
+uni2h+meta,Cribriform,Lepidic,0
+uni2h+meta,Cribriform,Micropapillary,0
+uni2h+meta,Cribriform,Papillary,0
+uni2h+meta,Cribriform,Solid,0
+uni2h+meta,In situ,Acinar,0
+uni2h+meta,In situ,Cribriform,0
+uni2h+meta,In situ,In situ,5
+uni2h+meta,In situ,Lepidic,1
+uni2h+meta,In situ,Micropapillary,0
+uni2h+meta,In situ,Papillary,1
+uni2h+meta,In situ,Solid,0
+uni2h+meta,Lepidic,Acinar,1
+uni2h+meta,Lepidic,Cribriform,0
+uni2h+meta,Lepidic,In situ,2
+uni2h+meta,Lepidic,Lepidic,1
+uni2h+meta,Lepidic,Micropapillary,0
+uni2h+meta,Lepidic,Papillary,0
+uni2h+meta,Lepidic,Solid,0
+uni2h+meta,Micropapillary,Acinar,0
+uni2h+meta,Micropapillary,Cribriform,1
+uni2h+meta,Micropapillary,In situ,0
+uni2h+meta,Micropapillary,Lepidic,0
+uni2h+meta,Micropapillary,Micropapillary,2
+uni2h+meta,Micropapillary,Papillary,1
+uni2h+meta,Micropapillary,Solid,0
+uni2h+meta,Papillary,Acinar,4
+uni2h+meta,Papillary,Cribriform,1
+uni2h+meta,Papillary,In situ,0
+uni2h+meta,Papillary,Lepidic,0
+uni2h+meta,Papillary,Micropapillary,1
+uni2h+meta,Papillary,Papillary,1
+uni2h+meta,Papillary,Solid,0
+uni2h+meta,Solid,Acinar,0
+uni2h+meta,Solid,Cribriform,1
+uni2h+meta,Solid,In situ,0
+uni2h+meta,Solid,Lepidic,0
+uni2h+meta,Solid,Micropapillary,1
+uni2h+meta,Solid,Papillary,0
+uni2h+meta,Solid,Solid,2
+virchow2+meta,Acinar,Acinar,2
+virchow2+meta,Acinar,Cribriform,2
+virchow2+meta,Acinar,In situ,0
+virchow2+meta,Acinar,Lepidic,2
+virchow2+meta,Acinar,Micropapillary,0
+virchow2+meta,Acinar,Papillary,0
+virchow2+meta,Acinar,Solid,0
+virchow2+meta,Cribriform,Acinar,0
+virchow2+meta,Cribriform,Cribriform,2
+virchow2+meta,Cribriform,In situ,0
+virchow2+meta,Cribriform,Lepidic,0
+virchow2+meta,Cribriform,Micropapillary,0
+virchow2+meta,Cribriform,Papillary,0
+virchow2+meta,Cribriform,Solid,0
+virchow2+meta,In situ,Acinar,0
+virchow2+meta,In situ,Cribriform,0
+virchow2+meta,In situ,In situ,5
+virchow2+meta,In situ,Lepidic,2
+virchow2+meta,In situ,Micropapillary,0
+virchow2+meta,In situ,Papillary,0
+virchow2+meta,In situ,Solid,0
+virchow2+meta,Lepidic,Acinar,0
+virchow2+meta,Lepidic,Cribriform,0
+virchow2+meta,Lepidic,In situ,1
+virchow2+meta,Lepidic,Lepidic,3
+virchow2+meta,Lepidic,Micropapillary,0
+virchow2+meta,Lepidic,Papillary,0
+virchow2+meta,Lepidic,Solid,0
+virchow2+meta,Micropapillary,Acinar,0
+virchow2+meta,Micropapillary,Cribriform,0
+virchow2+meta,Micropapillary,In situ,0
+virchow2+meta,Micropapillary,Lepidic,0
+virchow2+meta,Micropapillary,Micropapillary,3
+virchow2+meta,Micropapillary,Papillary,1
+virchow2+meta,Micropapillary,Solid,0
+virchow2+meta,Papillary,Acinar,1
+virchow2+meta,Papillary,Cribriform,1
+virchow2+meta,Papillary,In situ,1
+virchow2+meta,Papillary,Lepidic,3
+virchow2+meta,Papillary,Micropapillary,0
+virchow2+meta,Papillary,Papillary,0
+virchow2+meta,Papillary,Solid,1
+virchow2+meta,Solid,Acinar,0
+virchow2+meta,Solid,Cribriform,1
+virchow2+meta,Solid,In situ,0
+virchow2+meta,Solid,Lepidic,0
+virchow2+meta,Solid,Micropapillary,0
+virchow2+meta,Solid,Papillary,0
+virchow2+meta,Solid,Solid,3
+hoptimus1+meta,Acinar,Acinar,5
+hoptimus1+meta,Acinar,Cribriform,1
+hoptimus1+meta,Acinar,In situ,0
+hoptimus1+meta,Acinar,Lepidic,0
+hoptimus1+meta,Acinar,Micropapillary,0
+hoptimus1+meta,Acinar,Papillary,0
+hoptimus1+meta,Acinar,Solid,0
+hoptimus1+meta,Cribriform,Acinar,0
+hoptimus1+meta,Cribriform,Cribriform,2
+hoptimus1+meta,Cribriform,In situ,0
+hoptimus1+meta,Cribriform,Lepidic,0
+hoptimus1+meta,Cribriform,Micropapillary,0
+hoptimus1+meta,Cribriform,Papillary,0
+hoptimus1+meta,Cribriform,Solid,0
+hoptimus1+meta,In situ,Acinar,0
+hoptimus1+meta,In situ,Cribriform,0
+hoptimus1+meta,In situ,In situ,6
+hoptimus1+meta,In situ,Lepidic,1
+hoptimus1+meta,In situ,Micropapillary,0
+hoptimus1+meta,In situ,Papillary,0
+hoptimus1+meta,In situ,Solid,0
+hoptimus1+meta,Lepidic,Acinar,2
+hoptimus1+meta,Lepidic,Cribriform,0
+hoptimus1+meta,Lepidic,In situ,2
+hoptimus1+meta,Lepidic,Lepidic,0
+hoptimus1+meta,Lepidic,Micropapillary,0
+hoptimus1+meta,Lepidic,Papillary,0
+hoptimus1+meta,Lepidic,Solid,0
+hoptimus1+meta,Micropapillary,Acinar,0
+hoptimus1+meta,Micropapillary,Cribriform,1
+hoptimus1+meta,Micropapillary,In situ,0
+hoptimus1+meta,Micropapillary,Lepidic,0
+hoptimus1+meta,Micropapillary,Micropapillary,1
+hoptimus1+meta,Micropapillary,Papillary,1
+hoptimus1+meta,Micropapillary,Solid,1
+hoptimus1+meta,Papillary,Acinar,5
+hoptimus1+meta,Papillary,Cribriform,1
+hoptimus1+meta,Papillary,In situ,0
+hoptimus1+meta,Papillary,Lepidic,0
+hoptimus1+meta,Papillary,Micropapillary,1
+hoptimus1+meta,Papillary,Papillary,0
+hoptimus1+meta,Papillary,Solid,0
+hoptimus1+meta,Solid,Acinar,0
+hoptimus1+meta,Solid,Cribriform,1
+hoptimus1+meta,Solid,In situ,0
+hoptimus1+meta,Solid,Lepidic,0
+hoptimus1+meta,Solid,Micropapillary,0
+hoptimus1+meta,Solid,Papillary,0
+hoptimus1+meta,Solid,Solid,3
+fused,Acinar,Acinar,3
+fused,Acinar,Cribriform,1
+fused,Acinar,In situ,0
+fused,Acinar,Lepidic,0
+fused,Acinar,Micropapillary,0
+fused,Acinar,Papillary,2
+fused,Acinar,Solid,0
+fused,Cribriform,Acinar,0
+fused,Cribriform,Cribriform,2
+fused,Cribriform,In situ,0
+fused,Cribriform,Lepidic,0
+fused,Cribriform,Micropapillary,0
+fused,Cribriform,Papillary,0
+fused,Cribriform,Solid,0
+fused,In situ,Acinar,0
+fused,In situ,Cribriform,0
+fused,In situ,In situ,6
+fused,In situ,Lepidic,0
+fused,In situ,Micropapillary,0
+fused,In situ,Papillary,1
+fused,In situ,Solid,0
+fused,Lepidic,Acinar,2
+fused,Lepidic,Cribriform,0
+fused,Lepidic,In situ,1
+fused,Lepidic,Lepidic,0
+fused,Lepidic,Micropapillary,0
+fused,Lepidic,Papillary,1
+fused,Lepidic,Solid,0
+fused,Micropapillary,Acinar,0
+fused,Micropapillary,Cribriform,0
+fused,Micropapillary,In situ,0
+fused,Micropapillary,Lepidic,0
+fused,Micropapillary,Micropapillary,3
+fused,Micropapillary,Papillary,1
+fused,Micropapillary,Solid,0
+fused,Papillary,Acinar,2
+fused,Papillary,Cribriform,1
+fused,Papillary,In situ,0
+fused,Papillary,Lepidic,0
+fused,Papillary,Micropapillary,2
+fused,Papillary,Papillary,2
+fused,Papillary,Solid,0
+fused,Solid,Acinar,0
+fused,Solid,Cribriform,0
+fused,Solid,In situ,0
+fused,Solid,Lepidic,0
+fused,Solid,Micropapillary,0
+fused,Solid,Papillary,0
+fused,Solid,Solid,4

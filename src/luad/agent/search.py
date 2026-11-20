@@ -20,6 +20,7 @@ from typing import Callable, Protocol
 
 import numpy as np
 
+from luad.agent.selection import RULES, select
 from luad.data.dataset import Dataset
 from luad.eval.cv import corrected_se, cross_validate
 
@@ -68,8 +69,22 @@ class SearchResult:
 
 def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Proposer, fixed: dict,
                budget: int, patience: int, accept_k: float, n_jobs: int, log_path: Path | None = None,
-               explore: int = 0) -> SearchResult:
-    """`fixed` is merged into every proposed config (e.g. the input blocks of the row)."""
+               explore: int = 0, incumbent: str = "first", selection: str = "auroc") -> SearchResult:
+    """`fixed` is merged into every proposed config (e.g. the input blocks of the row).
+
+    incumbent="first" (v1-v4): trial 1 is accepted as the current best; later trials must beat it.
+    incumbent="best_explored" (v4b): nothing is accepted during the `explore` trials; at the end of the
+    exploration phase the explored trial with the highest mean AUROC becomes the current best. Afterwards the
+    acceptance rule is the same. This removes the advantage of whichever trial happened to come first.
+    selection: the final pick after the search stops (luad.agent.selection): "auroc" (v1-v5) returns the
+    accepted best; "one_se_ba" (v6) returns the best balanced accuracy among the trials tied on AUROC. It never
+    changes the trials, the acceptance decisions or the stopping point.
+    """
+    if incumbent not in ("first", "best_explored"):
+        raise ValueError(f"unknown incumbent rule {incumbent!r}")
+    if selection not in RULES:
+        raise ValueError(f"unknown selection rule {selection!r}; known: {RULES}")
+    defer = incumbent == "best_explored" and explore > 0
     n_val = int(np.mean([len(v) for _, v in ds.folds]))
     n_train = len(ds.y) - n_val
     history, best, streak, stop = [], None, 0, f"budget of {budget} trials used"
@@ -96,7 +111,10 @@ def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Prop
                "fold_balanced_accuracy": res["balanced_accuracy"].round(5).tolist(),
                "per_class_auroc_mean": np.nanmean([f["per_class_auroc"] for f in res["folds"]], 0)
                .round(4).tolist()}
-        if best is None:
+        if defer and t <= explore:
+            rec.update(gain=None, se=None, threshold=None, decision="explore",
+                       decision_reason="exploration phase: nothing is accepted")
+        elif best is None:
             rec.update(gain=None, se=None, threshold=None, decision="accept", decision_reason="first trial")
         else:
             d = res["macro_auroc"] - np.array(best["fold_macro_auroc"])
@@ -112,7 +130,11 @@ def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Prop
             best, streak = rec, 0
         elif t > explore:                       # exploration-phase trials do not count toward patience
             streak += 1
-        rec["best_trial"] = best["trial"]
+        if defer and t == explore:              # end of exploration: the best explored trial becomes the best
+            best = max(history + [rec], key=lambda h: h["macro_auroc_mean"])
+            rec["decision_reason"] += (f"; end of exploration: trial {best['trial']} (highest mean AUROC of the "
+                                       f"{explore} explored trials) becomes the current best")
+        rec["best_trial"] = best["trial"] if best else None
         history.append(rec)
         if log_path:
             with log_path.open("a") as f:
@@ -120,4 +142,8 @@ def run_search(ds: Dataset, make_model: Callable[[dict], object], proposer: Prop
         if streak >= patience:
             stop = f"{patience} trials in a row without an accepted improvement"
             break
+    if best is None and history:                # stopped inside the exploration phase
+        best = max(history, key=lambda h: h["macro_auroc_mean"])
+    if history:
+        best = select(history, selection, best, n_train, n_val)
     return SearchResult(best, history, stop)

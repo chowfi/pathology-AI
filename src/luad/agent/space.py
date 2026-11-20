@@ -9,13 +9,13 @@ import numpy as np
 
 class FusionSpace:
     def __init__(self, space_cfg: dict):
-        self.common = space_cfg["common"]
+        self.common = space_cfg.get("common", {})        # v1-v3 configs; v4 lists every method's knobs itself
         self.methods = {m: v for m, v in space_cfg.items() if m != "common"}
 
     def knobs(self, method: str, combine: str | None = None) -> dict[str, list]:
         """The knobs that matter for this method (stack_C only for combine=stack)."""
         k = {**self.common, **self.methods[method]}
-        if method == "late" and combine != "stack":
+        if "combine" in k and combine != "stack":
             k.pop("stack_C", None)
         if method == "gated":
             k.pop("C", None)
@@ -53,10 +53,10 @@ class FusionSpace:
         return json.dumps(config, sort_keys=True)
 
     def size(self, method: str) -> int:
-        if method == "late":
-            k = self.knobs("late", "mean_prob")
+        if "combine" in self.methods[method]:
+            k = self.knobs(method, "mean_prob")
             n_other = math.prod(len(v) for kk, v in k.items() if kk != "combine")
-            n_comb = len(self.methods["late"]["combine"]) - 1 + len(self.methods["late"]["stack_C"])
+            n_comb = len(self.methods[method]["combine"]) - 1 + len(self.methods[method].get("stack_C", [None]))
             return n_other * n_comb
         return math.prod(len(v) for v in self.knobs(method).values())
 
@@ -68,12 +68,12 @@ class FusionSpace:
 
     def mutate(self, config: dict, rng: np.random.Generator) -> dict:
         """Change one knob of `config` to a different allowed value."""
-        knobs = {k: v for k, v in self.knobs(config["method"], "stack").items() if len(v) > 1}
+        knobs = {k: v for k, v in self.knobs(config["method"], config.get("combine")).items() if len(v) > 1}
         k = list(knobs)[rng.integers(len(knobs))]
         choices = [v for v in knobs[k] if v != config.get(k)]
         new = {**config, k: choices[rng.integers(len(choices))]}
-        if new["method"] == "late" and "stack_C" not in new:
-            new["stack_C"] = self.methods["late"]["stack_C"][0]
+        if "stack_C" in self.methods[new["method"]] and "stack_C" not in new:
+            new["stack_C"] = self.methods[new["method"]]["stack_C"][0]
         return self.canonical(new)
 
     def json_schema(self) -> dict:
@@ -92,4 +92,5 @@ class FusionSpace:
         return {"type": "object", "properties": props, "required": list(props), "additionalProperties": False}
 
     def describe(self) -> str:
-        return json.dumps({"common (all methods)": self.common, **self.methods}, indent=1)
+        head = {"common (all methods)": self.common} if self.common else {}
+        return json.dumps({**head, **self.methods}, indent=1)

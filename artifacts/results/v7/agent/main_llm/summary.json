@@ -1,0 +1,68 @@
+{
+ "run": "main_llm",
+ "proposer": "llm",
+ "seed": 30,
+ "budget": 60,
+ "patience": 15,
+ "explore": 10,
+ "incumbent": "best_explored",
+ "selection": "one_se_ba",
+ "accept_k": 1.0,
+ "n_trials": 25,
+ "stop_reason": "15 trials in a row without an accepted improvement",
+ "selected_trial": 8,
+ "selected_config": {
+  "models": [
+   "uni2h",
+   "virchow2",
+   "hoptimus1"
+  ],
+  "use_meta": true,
+  "members": {
+   "uni2h": {
+    "C": 0.001,
+    "l2_normalize": true,
+    "pca": null,
+    "meta_weight": 10.0
+   },
+   "virchow2": {
+    "C": 0.0001,
+    "l2_normalize": false,
+    "pca": null,
+    "meta_weight": 1.0
+   },
+   "hoptimus1": {
+    "C": 0.0001,
+    "l2_normalize": false,
+    "pca": null,
+    "meta_weight": 1.0
+   }
+  },
+  "method": "early",
+  "l2_normalize": true,
+  "pca": null,
+  "meta_weight": 3.0,
+  "C": 0.0001,
+  "balance_blocks": true
+ },
+ "macro_auroc_mean": 0.8803566265612057,
+ "macro_auroc_sd": 0.025351848209174615,
+ "balanced_accuracy_mean": 0.5179138321995465,
+ "balanced_accuracy_sd": 0.08464475205472982,
+ "per_class_auroc_mean": [
+  0.8563,
+  0.9184,
+  0.9796,
+  0.8315,
+  0.8938,
+  0.7764,
+  0.9064
+ ],
+ "llm_calls": 25,
+ "llm_cost_usd": 0.5949,
+ "proposers_used": {
+  "llm": 25
+ },
+ "started": "2026-11-19T20:18:06",
+ "finished": "2026-11-19T20:35:14"
+}

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#52514e"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#c9c8c2;stroke-width:1.5}
+      .agent{fill:#f3f8fe;stroke:#2a78d6;stroke-width:1.5}
+      .test{fill:#fff6f1;stroke:#eb6834;stroke-width:1.8}
+      .t{font-size:13px;fill:#0b0b0b;font-weight:600}
+      .s{font-size:11.5px;fill:#52514e}
+      .h{font-size:12px;fill:#52514e;font-weight:600;letter-spacing:.3px}
+      .ln{stroke:#52514e;stroke-width:1.4;fill:none}
+      .lb{stroke:#2a78d6;stroke-width:1.6;fill:none}
+    </style>
+  </defs>
+  <rect width="960" height="470" fill="#ffffff"/>
+
+  <!-- stage labels -->
+  <text x="20" y="20" class="h">1  FEATURES (cached once)</text>
+  <text x="160" y="232" class="h">2  FUSION AGENT (train + val only: 167 patients, 15 fixed CV folds)</text>
+
+  <!-- row 1 -->
+  <rect x="20" y="72" width="130" height="72" rx="8" class="box"/>
+  <text x="85" y="97" text-anchor="middle" class="t">Whole slide</text>
+  <text x="85" y="115" text-anchor="middle" class="s">.svs, 4× level</text>
+  <text x="85" y="131" text-anchor="middle" class="s">1 slide / patient</text>
+  <path d="M150,108 L178,108" class="ln" marker-end="url(#a)"/>
+
+  <rect x="180" y="72" width="150" height="72" rx="8" class="box"/>
+  <text x="255" y="97" text-anchor="middle" class="t">Tissue mask + tiles</text>
+  <text x="255" y="115" text-anchor="middle" class="s">224 px at 0.5 µm/px</text>
+  <text x="255" y="131" text-anchor="middle" class="s">2.48 M tiles</text>
+
+  <rect x="365" y="34" width="135" height="44" rx="8" class="box"/>
+  <text x="432" y="54" text-anchor="middle" class="t">UNI2-h</text>
+  <text x="432" y="70" text-anchor="middle" class="s">1536-d per tile</text>
+  <rect x="365" y="86" width="135" height="44" rx="8" class="box"/>
+  <text x="432" y="106" text-anchor="middle" class="t">Virchow2</text>
+  <text x="432" y="122" text-anchor="middle" class="s">2560-d per tile</text>
+  <rect x="365" y="138" width="135" height="44" rx="8" class="box"/>
+  <text x="432" y="158" text-anchor="middle" class="t">H-optimus-1</text>
+  <text x="432" y="174" text-anchor="middle" class="s">1536-d per tile</text>
+  <path d="M330,108 L345,108 L345,56 L363,56 M345,108 L363,108 M345,108 L345,160 L363,160" class="ln"/>
+  <path d="M355,56 L363,56" class="ln" marker-end="url(#a)"/>
+  <path d="M355,108 L363,108" class="ln" marker-end="url(#a)"/>
+  <path d="M355,160 L363,160" class="ln" marker-end="url(#a)"/>
+
+  <rect x="530" y="34" width="160" height="44" rx="8" class="box"/>
+  <text x="610" y="54" text-anchor="middle" class="t">ABMIL</text>
+  <text x="610" y="70" text-anchor="middle" class="s">attention, cross-fitted</text>
+  <rect x="530" y="86" width="160" height="44" rx="8" class="box"/>
+  <text x="610" y="106" text-anchor="middle" class="t">Prism2 slide encoder</text>
+  <text x="610" y="122" text-anchor="middle" class="s">Paige, built on Virchow2</text>
+  <rect x="530" y="138" width="160" height="44" rx="8" class="box"/>
+  <text x="610" y="158" text-anchor="middle" class="t">ABMIL</text>
+  <text x="610" y="174" text-anchor="middle" class="s">attention, cross-fitted</text>
+  <path d="M500,56 L528,56" class="ln" marker-end="url(#a)"/>
+  <path d="M500,108 L528,108" class="ln" marker-end="url(#a)"/>
+  <path d="M500,160 L528,160" class="ln" marker-end="url(#a)"/>
+
+  <path d="M690,56 L705,56 L705,160 L690,160 M690,108 L720,108" class="ln"/>
+  <path d="M705,108 L720,108" class="ln" marker-end="url(#a)"/>
+  <rect x="722" y="72" width="218" height="72" rx="8" class="box"/>
+  <text x="831" y="97" text-anchor="middle" class="t">3 slide vectors + age, sex</text>
+  <text x="831" y="115" text-anchor="middle" class="s">aggregated once, cached on disk;</text>
+  <text x="831" y="131" text-anchor="middle" class="s">foundation models never rerun</text>
+  <path d="M831,144 L831,200 L135,200 L135,268" class="ln" marker-end="url(#a)"/>
+
+  <!-- row 2: agent loop -->
+  <rect x="20" y="244" width="660" height="210" rx="12" fill="none" stroke="#2a78d6" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <rect x="55" y="270" width="160" height="62" rx="8" class="agent"/>
+  <text x="135" y="294" text-anchor="middle" class="t">1  Propose</text>
+  <text x="135" y="312" text-anchor="middle" class="s">Claude reads the full log;</text>
+  <text x="135" y="326" text-anchor="middle" class="s">bandit if no API key</text>
+  <path d="M215,301 L263,301" class="lb" marker-end="url(#b)"/>
+
+  <rect x="265" y="270" width="170" height="62" rx="8" class="agent"/>
+  <text x="350" y="294" text-anchor="middle" class="t">2  Evaluate</text>
+  <text x="350" y="312" text-anchor="middle" class="s">mean macro AUROC over</text>
+  <text x="350" y="326" text-anchor="middle" class="s">15 folds (5 × 3 repeats)</text>
+  <path d="M435,301 L483,301" class="lb" marker-end="url(#b)"/>
+
+  <rect x="485" y="270" width="170" height="62" rx="8" class="agent"/>
+  <text x="570" y="294" text-anchor="middle" class="t">3  Accept?</text>
+  <text x="570" y="312" text-anchor="middle" class="s">paired gain &gt; 1 ×</text>
+  <text x="570" y="326" text-anchor="middle" class="s">corrected SE</text>
+  <path d="M570,332 L570,395 L437,395" class="lb" marker-end="url(#b)"/>
+
+  <rect x="265" y="368" width="170" height="62" rx="8" class="agent"/>
+  <text x="350" y="392" text-anchor="middle" class="t">4  Log</text>
+  <text x="350" y="410" text-anchor="middle" class="s">config, reasoning, fold</text>
+  <text x="350" y="424" text-anchor="middle" class="s">scores, gain, decision</text>
+  <path d="M265,399 L135,399 L135,334" class="lb" marker-end="url(#b)"/>
+
+  <!-- guardrails + final -->
+  <rect x="700" y="244" width="240" height="112" rx="8" class="box"/>
+  <text x="716" y="266" class="t">Guardrails</text>
+  <text x="716" y="286" class="s">• budget 60 trials, patience 15</text>
+  <text x="716" y="303" class="s">• first 10 trials explore</text>
+  <text x="716" y="320" class="s">• noise-aware acceptance</text>
+  <text x="716" y="337" class="s">• nested CV every round</text>
+
+  <path d="M655,301 L680,301 L680,405 L698,405" class="ln" marker-end="url(#a)"/>
+  <rect x="700" y="372" width="112" height="66" rx="8" class="box"/>
+  <text x="756" y="396" text-anchor="middle" class="t">Final pick</text>
+  <text x="756" y="413" text-anchor="middle" class="s">AUROC tie →</text>
+  <text x="756" y="427" text-anchor="middle" class="s">best BA</text>
+  <path d="M812,405 L826,405" class="ln" marker-end="url(#a)"/>
+  <rect x="828" y="372" width="112" height="66" rx="8" class="test"/>
+  <text x="884" y="396" text-anchor="middle" class="t">Test set</text>
+  <text x="884" y="413" text-anchor="middle" class="s">42 patients,</text>
+  <text x="884" y="427" text-anchor="middle" class="s">used once</text>
+</svg>

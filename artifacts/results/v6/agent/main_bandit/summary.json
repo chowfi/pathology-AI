@@ -1,0 +1,69 @@
+{
+ "run": "main_bandit",
+ "proposer": "bandit",
+ "seed": 30,
+ "budget": 60,
+ "patience": 15,
+ "explore": 10,
+ "incumbent": "best_explored",
+ "accept_k": 1.0,
+ "n_trials": 25,
+ "stop_reason": "15 trials in a row without an accepted improvement",
+ "selected_trial": 21,
+ "selected_config": {
+  "models": [
+   "uni2h",
+   "virchow2",
+   "hoptimus1"
+  ],
+  "use_meta": true,
+  "members": {
+   "uni2h": {
+    "C": 0.001,
+    "l2_normalize": false,
+    "pca": 16,
+    "meta_weight": 1.0
+   },
+   "virchow2": {
+    "C": 0.0001,
+    "l2_normalize": false,
+    "pca": 32,
+    "meta_weight": 3.0
+   },
+   "hoptimus1": {
+    "C": 0.001,
+    "l2_normalize": true,
+    "pca": null,
+    "meta_weight": 10.0
+   }
+  },
+  "method": "late_tuned",
+  "combine": "stack",
+  "stack_C": 0.1
+ },
+ "macro_auroc_mean": 0.8731773706850292,
+ "macro_auroc_sd": 0.035734498424372436,
+ "balanced_accuracy_mean": 0.5081292517006802,
+ "balanced_accuracy_sd": 0.11233126444337338,
+ "per_class_auroc_mean": [
+  0.8582,
+  0.8943,
+  0.9797,
+  0.8412,
+  0.8574,
+  0.7842,
+  0.8973
+ ],
+ "llm_calls": 0,
+ "llm_cost_usd": 0.0,
+ "proposers_used": {
+  "bandit": 25
+ },
+ "started": "2026-11-19T13:27:37",
+ "finished": "2026-11-19T13:30:42",
+ "selection": "one_se_ba",
+ "source_selected_trial": 10,
+ "source_log": "artifacts/results/v5/agent/main_bandit/trials.jsonl",
+ "llm_calls_this_round": 0,
+ "llm_cost_this_round_usd": 0.0
+}

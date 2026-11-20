@@ -45,7 +45,8 @@ def main() -> None:
         space = space_for(blocks, cfg)
         res = run_search(ds, lambda c: EarlyFusionLR(c, cfg["classifier"], seed=s["seed"]),
                          GridProposer(space, s["seed"]), {"blocks": blocks}, s["budget"], s["patience"],
-                         s["accept_k"], s["n_jobs"], log_path=out / f"{row}.jsonl", explore=s.get("explore", 0))
+                         s["accept_k"], s["n_jobs"], log_path=out / f"{row}.jsonl", explore=s.get("explore", 0),
+                     incumbent=s.get("incumbent", "first"), selection=s.get("selection", "auroc"))
         b = res.best
         top = max(res.history, key=lambda h: h["macro_auroc_mean"])
         summary.append({"row": row, "blocks": "+".join(blocks), "selected_trial": b["trial"],

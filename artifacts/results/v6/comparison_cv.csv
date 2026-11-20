@@ -1,0 +1,15 @@
+row,metric,row_mean,fused_mean,fused_minus_row,corrected_se,folds_fused_better
+meta,macro_auroc,0.5985,0.8811,0.2826,0.0352,15
+meta,balanced_accuracy,0.2572,0.5022,0.245,0.0676,15
+uni2h,macro_auroc,0.8665,0.8811,0.0146,0.0097,12
+uni2h,balanced_accuracy,0.4961,0.5022,0.006,0.0357,9
+virchow2,macro_auroc,0.8621,0.8811,0.019,0.0104,13
+virchow2,balanced_accuracy,0.4953,0.5022,0.0068,0.0544,9
+hoptimus1,macro_auroc,0.8626,0.8811,0.0185,0.0073,13
+hoptimus1,balanced_accuracy,0.4837,0.5022,0.0185,0.0342,9
+uni2h+meta,macro_auroc,0.8701,0.8811,0.011,0.008,11
+uni2h+meta,balanced_accuracy,0.4957,0.5022,0.0065,0.037,8
+virchow2+meta,macro_auroc,0.8626,0.8811,0.0185,0.0104,13
+virchow2+meta,balanced_accuracy,0.4886,0.5022,0.0136,0.0518,8
+hoptimus1+meta,macro_auroc,0.8629,0.8811,0.0182,0.0073,13
+hoptimus1+meta,balanced_accuracy,0.4838,0.5022,0.0184,0.0388,7

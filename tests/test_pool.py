@@ -24,3 +24,11 @@ def test_pool_slide_and_round_trip(tmp_path):
     save_slide_features(out, ["WSI-1"], v[None], np.array([n]), {"model": "m"})
     X, ids, nt, meta = load_slide_features(out)
     assert X.shape == (1, 5) and ids == ["WSI-1"] and nt[0] == 7 and meta["model"] == "m"
+
+
+def test_aggregation_config_picks_the_feature_file():
+    from luad.data.dataset import aggregation, feature_file
+    assert feature_file("virchow2") == "prism2_virchow2.npz"
+    for m in ["uni2h", "hoptimus1"]:                     # v3-v4b: mean pooling; v5: cross-fitted ABMIL cache
+        agg = aggregation(m)
+        assert feature_file(m) == (f"abmil_{m}_devfolds.npz" if agg == "abmil" else f"{agg}_{m}.npz")

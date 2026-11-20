@@ -20,7 +20,8 @@ def _one_fold(make_model: Callable, ds: Dataset, train: np.ndarray, val: np.ndar
 
 def cross_validate(make_model: Callable, ds: Dataset, n_jobs: int = 1) -> dict:
     """Returns per-fold scores, their mean/sd, and out-of-fold probabilities per repeat (n_repeats, n, 7)."""
-    out = Parallel(n_jobs=n_jobs)(delayed(_one_fold)(make_model, ds, tr, va) for tr, va in ds.folds)
+    out = Parallel(n_jobs=n_jobs)(delayed(_one_fold)(make_model, ds.for_fold(k), tr, va)
+                                  for k, (tr, va) in enumerate(ds.folds))
     n_rep = max(r for r, _ in ds.fold_ids) + 1
     oof = np.full((n_rep, len(ds.y), 7), np.nan)
     for (r, _), (tr, va), (_, p) in zip(ds.fold_ids, ds.folds, out):

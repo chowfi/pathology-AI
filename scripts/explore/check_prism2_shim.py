@@ -20,8 +20,7 @@ import torch
 from PIL import Image
 from torchvision import transforms as T
 
-sys.path.insert(0, str(Path(__file__).parent))
-import flash_attn_shim  # noqa: E402
+from luad.embeddings import flash_attn_shim  # moved into the package (used by scripts/extract_prism2.py)
 
 DEV = "cuda"
 PRISM2_REV = "450352d0ddc6b42b21ce20794ce0fbefe6b5a47a"  # pinned: the code version that was inspected

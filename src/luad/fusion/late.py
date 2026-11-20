@@ -37,18 +37,27 @@ def log_loss(y: np.ndarray, p: np.ndarray) -> float:
 
 
 class LateFusion:
-    """config: models, use_meta, combine, C, l2_normalize, pca, meta_weight, [stack_C], [inner_folds]."""
+    """config: models, use_meta, combine, C, l2_normalize, pca, meta_weight, [stack_C], [inner_folds].
+
+    method "late": every per-model logistic regression shares C, l2_normalize, pca and meta_weight.
+    method "late_tuned": each per-model logistic regression is that model's own tuned single-model + metadata
+    baseline, config["members"][model] (C, l2_normalize, pca, meta_weight); the shared knobs are not used.
+    """
 
     def __init__(self, config: dict, clf_cfg: dict, seed: int = 0):
         if config["combine"] not in COMBINERS:
             raise ValueError(f"unknown combiner {config['combine']}")
+        self.tuned = config.get("method") == "late_tuned"
+        if self.tuned and not config.get("members"):
+            raise ValueError("late_tuned needs the tuned member configs ('members')")
         self.config, self.clf_cfg, self.seed = config, clf_cfg, seed
 
     def _base(self, model: str) -> EarlyFusionLR:
         c = self.config
         blocks = [model] + (["meta"] if c.get("use_meta", True) else [])
-        return EarlyFusionLR({"blocks": blocks, "C": c["C"], "l2_normalize": c.get("l2_normalize", False),
-                              "pca": c.get("pca"), "meta_weight": c.get("meta_weight", 1.0)},
+        k = c["members"][model] if self.tuned else c
+        return EarlyFusionLR({"blocks": blocks, "C": k["C"], "l2_normalize": k.get("l2_normalize", False),
+                              "pca": k.get("pca"), "meta_weight": k.get("meta_weight", 1.0)},
                              self.clf_cfg, self.seed)
 
     def _inner_oof(self, ds: Dataset, idx: np.ndarray) -> np.ndarray:

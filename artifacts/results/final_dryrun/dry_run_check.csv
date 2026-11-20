@@ -1,0 +1,14 @@
+row,auroc_logged,auroc_here,ba_logged,ba_here,max_abs_diff
+meta,0.51093,0.51093,0.10544,0.10544,
+uni2h,0.87934,0.87934,0.59524,0.59524,
+virchow2,0.86025,0.86025,0.61395,0.61395,
+hoptimus1,0.87959,0.87959,0.56293,0.56293,
+uni2h+meta,0.86826,0.86826,0.53912,0.53912,
+virchow2+meta,0.86025,0.86025,0.61395,0.61395,
+hoptimus1+meta,0.87959,0.87959,0.52721,0.52721,
+fused,0.90034,0.90034,0.62755,0.62755,
+vectors abmil_uni2h,,,,,0.0
+vectors abmil_hoptimus1,,,,,0.0
+vectors joint_uni2h,,,,,0.0
+vectors joint_virchow2,,,,,0.0
+vectors joint_hoptimus1,,,,,0.0

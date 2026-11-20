@@ -5,25 +5,38 @@ models: [uni2h, virchow2, hoptimus1]    # the fused model always uses all three 
 use_meta: true
 
 # Search space. Every knob shared with the baselines (C, l2_normalize, pca, meta_weight) has the same values.
+# v4 (artifacts/results/v4/PLAN.md): each method lists its own knobs (v1-v3 used a "common" block for
+# l2_normalize / pca / meta_weight, which the two tuned methods must not have), plus two new methods.
 space:
-  common:
+  early:                                  # concatenate, one logistic regression (one shared setting)
     l2_normalize: [false, true]
     pca: [null, 16, 32, 64, 128]          # per model, fitted inside the training fold
     meta_weight: [1.0, 3.0, 10.0]
-  early:                                  # concatenate, one logistic regression
     C: [1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
     balance_blocks: [false, true]
-  late:                                   # one logistic regression per model, then combine
+  late:                                   # one logistic regression per model (shared setting), then combine
+    l2_normalize: [false, true]
+    pca: [null, 16, 32, 64, 128]
+    meta_weight: [1.0, 3.0, 10.0]
     C: [1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
     combine: [mean_prob, mean_logit, learned_weights, weighted_vote, stack]
     stack_C: [1.0e-3, 1.0e-2, 1.0e-1, 1.0]   # only used by combine=stack
   gated:                                  # learned per-patient gate over the 3 models
+    l2_normalize: [false, true]
+    pca: [null, 16, 32, 64, 128]
+    meta_weight: [1.0, 3.0, 10.0]
     hidden: [16, 32, 64, 128]
     dropout: [0.1, 0.25, 0.5]
     weight_decay: [1.0e-3, 1.0e-2, 1.0e-1, 1.0]
     epochs: [100, 200, 400]
     lr: [1.0e-3, 3.0e-3]
     n_seeds: [3]
+  late_tuned:                             # v4: members = each model's own tuned <model>+meta baseline
+    combine: [mean_prob, mean_logit, learned_weights, weighted_vote, stack]
+    stack_C: [1.0e-3, 1.0e-2, 1.0e-1, 1.0]
+  early_tuned:                            # v4: blocks keep their tuned L2/PCA; block weights learned by inner CV
+    meta_weight: [1.0, 3.0, 10.0]
+    C: [1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
 
 proposer:
   kind: llm                               # llm | bandit. llm falls back to bandit without a key or on any failure
@@ -38,4 +51,4 @@ llm:
   max_cost_usd_per_run: 6.0               # hard cap; after it the bandit proposes
   price_per_mtok: {input: 4.0, output: 20.0, cache_read: 0.20, cache_write: 5.0}   # USD, claude-opus-5-5
 
-results_dir: artifacts/results/v2/agent
+results_dir: artifacts/results/v7/agent

@@ -21,9 +21,9 @@ models for 7-class lung adenocarcinoma growth-pattern classification (Acinar, Cr
 Micropapillary, Papillary, Solid).
 
 Data. 167 train+val patients (class counts: Acinar 26, Cribriform 12, In situ 36, Lepidic 17, Micropapillary 21, \
-Papillary 32, Solid 23). One slide per patient. Each slide is one mean-pooled embedding per model: UNI2-h (1536-d), \
-Virchow2 (2560-d: CLS + mean patch token), H-optimus-1 (1536-d), plus age and sex. The test set is locked away and \
-is never used during the search.
+Papillary 32, Solid 23). One slide per patient. Each slide is one embedding per model: {streams}, plus age and \
+sex. The aggregation is fixed; it is not part of the search. The test set is locked away and is never used during \
+the search.
 
 Evaluation of one trial. 15 fixed folds (5-fold stratified CV repeated 3 times). Score = mean macro one-vs-rest \
 AUROC over the 15 folds; balanced accuracy is also reported. All preprocessing (L2 norm, standardising, PCA) is \
@@ -32,9 +32,9 @@ linear softmax classifier, so the classifier family is fixed; only the fusion ch
 
 Methods and knobs.
 - early: standardise each model (optional per-slide L2 norm first, optional PCA per model), concatenate with \
-age/sex, one multinomial logistic regression with inverse L2 strength C. balance_blocks scales each model block by \
-1/sqrt(columns) so no model dominates by size. meta_weight multiplies the standardised age/sex columns (higher = \
-less shrinkage of metadata).
+age/sex, one multinomial logistic regression with inverse L2 strength C. balance_blocks rescales the model blocks \
+to equal total variance (overall scale, and so the meaning of C, unchanged) so no model dominates by its number of \
+columns. meta_weight multiplies the standardised age/sex columns (higher = less shrinkage of metadata).
 - late: one logistic regression per model (each with age/sex, same C / l2_normalize / pca / meta_weight), then \
 combine probabilities: mean_prob, mean_logit (geometric mean), learned_weights (simplex weights learned by inner CV \
 in the training fold), weighted_vote, stack (a second logistic regression with inverse strength stack_C on the base \
@@ -42,14 +42,23 @@ log-probabilities + age/sex, trained on inner-CV predictions).
 - gated: per-model projection (dropout, Linear to `hidden`, LayerNorm), a softmax gate over the 3 models per \
 patient, weighted sum, + age/sex, linear softmax head. AdamW (lr, weight_decay), fixed epochs, averaged over \
 n_seeds networks. Only 134 training patients per fold, so it overfits easily.
+- late_tuned: like late, but each per-model logistic regression is that model's OWN tuned single-model + age/sex \
+baseline (configs below), so every member runs at the setting that suited it alone instead of one shared C / PCA / \
+L2. Knobs: combine (and stack_C for stack). learned_weights may give one model weight 1, so the best single model \
+is a special case.
+- early_tuned: each model block keeps the L2 / PCA of its own tuned baseline (configs below); the blocks are \
+joined with age/sex (meta_weight) in one logistic regression with inverse strength C. A weight per model block \
+(0, 0.25, 0.5 or 1; the largest is 1) is learned by inner CV inside the training fold; with the L2 penalty a block \
+weight w acts like a separate inverse strength C x w^2 for that block, and 0 drops the block.
+Tuned member configs (the selected <model>+meta baseline rows, same folds): {members}
 
 Search space (JSON; knobs a method does not use must be null):
 {space}
 
 Search rules (enforced by code, not by you).
 - Budget {budget} trials. The first {explore} trials are an exploration phase: they never count toward the stop \
-rule, so use them to map the space (every method, and the knobs most likely to matter). After that, the search \
-stops after {patience} trials in a row without an accepted improvement.
+rule, so use them to map the space (every method, and the knobs most likely to matter).{explore_rule} After \
+that, the search stops after {patience} trials in a row without an accepted improvement.
 - A trial replaces the current best only if its mean paired per-fold AUROC gain over the best is larger than \
 {accept_k} x the corrected standard error of that gain (Nadeau-Bengio correction for overlapping folds). The \
 threshold is usually 0.005-0.02 AUROC. Gains below it are treated as noise. So chasing tiny differences wastes \
@@ -62,6 +71,32 @@ helped, which methods are untested. Reason like a careful scientist: state what 
 next trial, and say what you expect and what you would conclude if it fails. Be concise."""
 
 
+MODEL_NAMES = {"uni2h": "UNI2-h", "virchow2": "Virchow2", "hoptimus1": "H-optimus-1"}
+AGG_TEXT = {
+    "mean": "mean of tile embeddings",
+    "prism2": "Prism2 slide embedding (Paige's slide encoder applied to the Virchow2 tile CLS tokens)",
+    "abmil": ("attention-weighted mean of tile embeddings; the gated-attention MIL weights are learned inside each "
+              "training fold with cross-fitting, so no slide vector comes from a network that saw its own label"),
+    "joint_abmil": ("attention-weighted mean of tile embeddings, where ONE gated-attention network sees all three "
+                    "models' embeddings of each tile and its attention weights are shared by the three models "
+                    "(tile-level fusion); learned inside each training fold with cross-fitting"),
+}
+
+
+def streams_text(models: list[str]) -> str:
+    from luad.data.dataset import aggregation
+    dims = {"uni2h": 1536, "virchow2": 2560, "hoptimus1": 1536}
+    return ", ".join(f"{MODEL_NAMES.get(m, m)} ({dims.get(m, '?')}-d, {AGG_TEXT[aggregation(m, fusion=True)]})"
+                     for m in models)
+
+
+EXPLORE_RULE = {
+    "first": " The first trial is accepted as the starting best.",
+    "best_explored": (" Nothing is accepted during the exploration phase; at its end, the explored trial with the "
+                      "highest mean AUROC becomes the current best."),
+}
+
+
 def history_table(history: list[dict]) -> str:
     if not history:
         return "(no trials yet)"
@@ -72,8 +107,10 @@ def history_table(history: list[dict]) -> str:
         pc = " ".join(f"{n[:4]} {v:.2f}" for n, v in zip(
             ["Acinar", "Cribriform", "In situ", "Lepidic", "Micropapillary", "Papillary", "Solid"],
             h.get("per_class_auroc_mean", [])))
-        dec = h["decision"] + (f" (gain {h['gain']:+.4f}, threshold {h['threshold']:.4f})" if h["gain"] is not None
-                               else " (first trial)")
+        if h["gain"] is not None:
+            dec = h["decision"] + f" (gain {h['gain']:+.4f}, threshold {h['threshold']:.4f})"
+        else:
+            dec = h["decision"] + (" (first trial)" if h["decision"] == "accept" else "")
         lines.append(f"#{h['trial']} {c['method']} {knobs}\n   AUROC {h['macro_auroc_mean']:.4f} ± "
                      f"{h['macro_auroc_sd']:.4f} | BA {h['balanced_accuracy_mean']:.3f} | per-class {pc} | {dec}")
     return "\n".join(lines)
@@ -83,11 +120,14 @@ class LLMProposer:
     name = "llm"
 
     def __init__(self, space: FusionSpace, llm_cfg: dict, fallback, baselines_text: str, search_cfg: dict,
-                 client=None):
+                 client=None, members: dict | None = None, models: list[str] | None = None):
         self.space, self.cfg, self.fallback, self.baselines = space, llm_cfg, fallback, baselines_text
         self.system = SYSTEM.format(space=space.describe(), budget=search_cfg["budget"],
                                     patience=search_cfg["patience"], accept_k=search_cfg["accept_k"],
-                                    explore=search_cfg.get("explore", 0))
+                                    explore=search_cfg.get("explore", 0),
+                                    explore_rule=EXPLORE_RULE[search_cfg.get("incumbent", "first")],
+                                    members=json.dumps(members) if members else "(not used)",
+                                    streams=streams_text(models or ["uni2h", "virchow2", "hoptimus1"]))
         self.schema = space.json_schema()
         self.calls, self.cost = 0, 0.0
         self.client = client
@@ -114,6 +154,8 @@ class LLMProposer:
 
     def user_message(self, history, ctx) -> str:
         best = f"trial #{ctx['best_trial']}" if ctx["best_trial"] else "none yet"
+        if not ctx["best_trial"] and ctx.get("exploring"):
+            best += " (set at the end of the exploration phase)"
         if ctx.get("exploring"):
             phase = (f"Exploration phase: trial {ctx['budget'] - ctx['trials_left'] + 1} of {ctx['explore']} "
                      "(does not count toward the stop rule).")

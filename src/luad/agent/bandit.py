@@ -1,7 +1,7 @@
 """Deterministic proposer: a UCB bandit over fusion methods, then a local or random config inside the method.
 
 It reads the same trial history as the LLM proposer, so it is also a feedback loop:
-  1. every method is tried once first (early, late, gated)
+  1. every method is tried once first, in the order of conf/agent.yaml
   2. then the method with the highest UCB score is chosen:
        mean scaled reward of its trials + ucb_c * sqrt(2 ln N / n_method)
      (rewards = CV macro AUROC, min-max scaled over all trials so far)

@@ -26,6 +26,7 @@ from luad.agent.search import run_search
 from luad.agent.space import FusionSpace
 from luad.config import load_config, repo_path
 from luad.data.dataset import load_dev_set
+from luad.eval.baselines import tuned_members
 from luad.fusion.registry import build_model
 from luad.utils.seed import seed_everything
 
@@ -54,22 +55,26 @@ def main() -> None:
     seed = args.seed if args.seed is not None else acfg["proposer"]["seed"]
     seed_everything(seed)
     space = FusionSpace(acfg["space"])
+    members = tuned_members(acfg["models"], repo_path(ecfg["results_dir"]))   # fixed inputs of the *_tuned methods
     bandit = BanditProposer(space, seed, acfg["proposer"]["ucb_c"])
     use_llm = acfg["proposer"]["kind"] == "llm" and not args.no_llm
-    proposer = LLMProposer(space, acfg["llm"], bandit, baselines_text(), s) if use_llm else bandit
+    proposer = LLMProposer(space, acfg["llm"], bandit, baselines_text(), s, members=members,
+                                       models=acfg["models"]) if use_llm else bandit
     if use_llm and proposer.disabled:
         print(f"LLM proposer disabled ({proposer.disabled}); using the deterministic bandit", flush=True)
 
-    ds = load_dev_set(acfg["models"])
+    ds = load_dev_set(acfg["models"], fusion=True)          # v7: the fused model's own input streams
     out = repo_path(acfg["results_dir"]) / args.run
-    fixed = {"models": acfg["models"], "use_meta": acfg["use_meta"]}
+    fixed = {"models": acfg["models"], "use_meta": acfg["use_meta"], "members": members}
     t0 = dt.datetime.now()
     res = run_search(ds, lambda c: build_model(c, ecfg["classifier"], seed=ecfg["search"]["seed"]), proposer,
                      fixed, s["budget"], s["patience"], s["accept_k"], s["n_jobs"], log_path=out / "trials.jsonl",
-                     explore=s.get("explore", 0))
+                     explore=s.get("explore", 0),
+                     incumbent=s.get("incumbent", "first"), selection=s.get("selection", "auroc"))
     b = res.best
     summary = {"run": args.run, "proposer": proposer.name if not (use_llm and proposer.disabled) else "bandit",
-               "seed": seed, "budget": s["budget"], "patience": s["patience"], "explore": s.get("explore", 0), "accept_k": s["accept_k"],
+               "seed": seed, "budget": s["budget"], "patience": s["patience"], "explore": s.get("explore", 0),
+               "incumbent": s.get("incumbent", "first"), "selection": s.get("selection", "auroc"), "accept_k": s["accept_k"],
                "n_trials": len(res.history), "stop_reason": res.stop_reason,
                "selected_trial": b["trial"], "selected_config": {**fixed, **b["config"]},
                "macro_auroc_mean": b["macro_auroc_mean"], "macro_auroc_sd": b["macro_auroc_sd"],

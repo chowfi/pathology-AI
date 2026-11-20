@@ -1,9 +1,24 @@
 # Model selection on train+val only (167 patients, 15 fixed folds = 5 folds x 3 repeats, artifacts/splits).
 # Every row of the comparison table uses the SAME classifier, metric, folds, budget and acceptance rule.
 
-features_dir: artifacts/features        # mean_<model>.npz from scripts/pool_slides.py
-results_dir: artifacts/results/v2           # v1 (no exploration phase) is kept in artifacts/results/v1
+features_dir: artifacts/features
+results_dir: artifacts/results/v7           # v1 (no exploration), v2 (exploration), v3 (Prism2), v4 (tuned methods), v4b (rule fix), v5 (ABMIL), v6 (BA tie-break) kept alongside; v7 plan: artifacts/results/v7/PLAN.md
 models: [uni2h, virchow2, hoptimus1]
+
+# Tile -> slide aggregation, chosen OUTSIDE the search, before any Prism2 result was seen (2026-11-18):
+# use the model's own slide encoder where one exists, otherwise mean pooling.
+#   Virchow2 -> Prism2 (Paige's slide encoder built on Virchow2 CLS tile tokens; scripts/extract_prism2.py)
+#   UNI2-h, H-optimus-1 -> mean pooling (tile encoders only; scripts/pool_slides.py)
+# v1/v2 used mean pooling for all three (artifacts/results/v1, v2).
+aggregation: {uni2h: abmil, virchow2: prism2, hoptimus1: abmil}
+# v5 (artifacts/results/v5/PLAN.md): UNI2-h and H-optimus-1 -> gated-attention MIL pooling, cross-fitted inside
+# every fold (scripts/abmil_features.py). v3-v4b: {uni2h: mean, virchow2: prism2, hoptimus1: mean}.
+abmil: {hidden: 128, dropout: 0.25, lr: 2.0e-4, weight_decay: 1.0e-4, epochs: 30, max_tiles: 4096, n_parts: 5, seed: 30}
+# v7 (artifacts/results/v7/PLAN.md): the FUSED model's streams come from tile-level fusion: one gated attention over
+# the tiles of all three models (each projected to `proj` dims first), shared attention, raw tiles pooled per model.
+# Same training settings as `abmil`. The single-model rows keep `aggregation` above.
+fusion_aggregation: joint_abmil
+joint_abmil: {proj: 128}
 
 classifier:                             # multinomial logistic regression in every row
   class_weight: balanced                # class imbalance: errors on small classes cost more
@@ -21,6 +36,15 @@ search:
   # v2: the first `explore` trials do not count toward patience. In v1 trial 1 was accepted by default and every
   # run stopped at 16-19 of 60 trials, before all methods/knobs were explored (see artifacts/results/v1).
   explore: 10
+  # v4b (artifacts/results/v4/PLAN.md, amendment 1): nothing is accepted during exploration; at its end the
+  # explored trial with the highest mean AUROC becomes the current best. Under "first" (v1-v4) trial 1 was the
+  # current best by default and, inside a plateau, could never be beaten by more than 1 SE (v4: all 3 Claude
+  # runs kept trial 1 at 0.854 while trial 2 scored 0.864, gain +0.0099 vs threshold 0.0110).
+  incumbent: best_explored
+  # v6 (artifacts/results/v6/PLAN.md): final pick = the best balanced accuracy among the trials whose AUROC ties
+  # with the best (gap within 1 corrected SE). v1-v5 used "auroc" (the accepted best). The README lists both
+  # metrics as primary; v5's AUROC-only pick lost on balanced accuracy. Only the final pick changes.
+  selection: one_se_ba
   # A trial replaces the current best only if its mean paired per-fold gain is larger than
   # accept_k x the corrected standard error of that gain (Nadeau & Bengio 2003: repeated CV folds
   # overlap, so the naive SE is too small; factor = 1/n_folds + n_val/n_train).
@@ -35,3 +59,13 @@ space:
   l2_normalize: [false, true]           # per-slide L2 norm before standardising
   pca: [null, 16, 32, 64, 128]          # fitted inside each training fold only
   meta_weight: [1.0, 3.0, 10.0]         # only for rows with age/sex AND an embedding (same knob as in fusion)
+
+# One-time test evaluation (scripts/final_test.py). Fixed 2026-11-19, before the test set was opened
+# (artifacts/results/v7/PLAN.md, "Final test protocol"). Every row is refit on all 167 train+val patients.
+final:
+  round: artifacts/results/v7           # locked picks: baselines/summary.csv (rows) + agent/<fused_run> (fused)
+  fused_run: main_llm
+  crossfit_seed_index: 15               # ABMIL / joint cross-fit seed = abmil.seed + 1000 x 15 (CV fold k used k)
+  bootstrap: 2000                       # resamples of the test patients, stratified by class; percentile 95% CIs
+  bootstrap_seed: 30
+  out_dir: artifacts/results/final      # the dry run writes to <out_dir>_dryrun

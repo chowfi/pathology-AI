@@ -1,0 +1,51 @@
+outer_fold,row,chosen,config,inner_cv_auroc,outer_auroc,outer_ba
+0,meta,meta,"{""C"": 10.0}",0.6285,0.5079,0.1054
+0,uni2h,uni2h,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": null}",0.8152,0.8569,0.5595
+0,virchow2,virchow2,"{""C"": 0.001, ""l2_normalize"": true, ""pca"": null}",0.8715,0.8495,0.5578
+0,hoptimus1,hoptimus1,"{""C"": 0.1, ""l2_normalize"": true, ""pca"": 128}",0.8159,0.8604,0.432
+0,uni2h+meta,uni2h+meta,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": 128, ""meta_weight"": 10.0}",0.8207,0.8471,0.5119
+0,virchow2+meta,virchow2+meta,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.863,0.8657,0.5221
+0,hoptimus1+meta,hoptimus1+meta,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": 128, ""meta_weight"": 10.0}",0.8202,0.8417,0.5272
+0,"fused (agent, bandit)","fused (agent, bandit)","{""method"": ""late_tuned"", ""combine"": ""learned_weights""}",0.8664,0.8844,0.5833
+0,best single,best single (virchow2),"{""C"": 0.001, ""l2_normalize"": true, ""pca"": null}",0.8715,0.8495,0.5578
+0,best single + meta,best single + meta (virchow2+meta),"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.863,0.8657,0.5221
+1,meta,meta,"{""C"": 10.0}",0.5397,0.7422,0.3667
+1,uni2h,uni2h,"{""C"": 0.001, ""l2_normalize"": true, ""pca"": null}",0.8097,0.7946,0.3452
+1,virchow2,virchow2,"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 16}",0.8461,0.9011,0.681
+1,hoptimus1,hoptimus1,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": null}",0.8223,0.8318,0.4631
+1,uni2h+meta,uni2h+meta,"{""C"": 0.1, ""l2_normalize"": false, ""pca"": 128, ""meta_weight"": 1.0}",0.8132,0.7957,0.456
+1,virchow2+meta,virchow2+meta,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.8444,0.8893,0.5631
+1,hoptimus1+meta,hoptimus1+meta,"{""C"": 0.1, ""l2_normalize"": false, ""pca"": 128, ""meta_weight"": 1.0}",0.8203,0.8135,0.4452
+1,"fused (agent, bandit)","fused (agent, bandit)","{""method"": ""late_tuned"", ""combine"": ""learned_weights""}",0.861,0.863,0.4738
+1,best single,best single (virchow2),"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 16}",0.8461,0.9011,0.681
+1,best single + meta,best single + meta (virchow2+meta),"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.8444,0.8893,0.5631
+2,meta,meta,"{""C"": 10.0}",0.6194,0.5924,0.2578
+2,uni2h,uni2h,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": null}",0.8097,0.82,0.4153
+2,virchow2,virchow2,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16}",0.8855,0.8172,0.4476
+2,hoptimus1,hoptimus1,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": null}",0.8212,0.8281,0.4034
+2,uni2h+meta,uni2h+meta,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.7957,0.8009,0.3677
+2,virchow2+meta,virchow2+meta,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.8854,0.8161,0.4476
+2,hoptimus1+meta,hoptimus1+meta,"{""C"": 0.1, ""l2_normalize"": false, ""pca"": 128, ""meta_weight"": 1.0}",0.8147,0.8176,0.4391
+2,"fused (agent, bandit)","fused (agent, bandit)","{""method"": ""early_tuned"", ""meta_weight"": 1.0, ""C"": 0.001}",0.882,0.8179,0.4224
+2,best single,best single (virchow2),"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16}",0.8855,0.8172,0.4476
+2,best single + meta,best single + meta (virchow2+meta),"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.8854,0.8161,0.4476
+3,meta,meta,"{""C"": 10.0}",0.6062,0.5513,0.265
+3,uni2h,uni2h,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 128}",0.8043,0.7671,0.3915
+3,virchow2,virchow2,"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 16}",0.8596,0.8255,0.3116
+3,hoptimus1,hoptimus1,"{""C"": 0.1, ""l2_normalize"": true, ""pca"": 128}",0.7994,0.8506,0.4459
+3,uni2h+meta,uni2h+meta,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": 128, ""meta_weight"": 10.0}",0.7868,0.794,0.4463
+3,virchow2+meta,virchow2+meta,"{""C"": 0.0001, ""l2_normalize"": false, ""pca"": 32, ""meta_weight"": 3.0}",0.863,0.8303,0.3626
+3,hoptimus1+meta,hoptimus1+meta,"{""C"": 1.0, ""l2_normalize"": true, ""pca"": null, ""meta_weight"": 1.0}",0.7975,0.8487,0.4378
+3,"fused (agent, bandit)","fused (agent, bandit)","{""method"": ""early_tuned"", ""meta_weight"": 10.0, ""C"": 0.0001}",0.8578,0.8336,0.4
+3,best single,best single (virchow2),"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 16}",0.8596,0.8255,0.3116
+3,best single + meta,best single + meta (virchow2+meta),"{""C"": 0.0001, ""l2_normalize"": false, ""pca"": 32, ""meta_weight"": 3.0}",0.863,0.8303,0.3626
+4,meta,meta,"{""C"": 10.0}",0.6107,0.6312,0.2755
+4,uni2h,uni2h,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": 32}",0.8278,0.7456,0.3633
+4,virchow2,virchow2,"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 32}",0.8678,0.8367,0.4296
+4,hoptimus1,hoptimus1,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": 32}",0.8224,0.7937,0.4194
+4,uni2h+meta,uni2h+meta,"{""C"": 0.1, ""l2_normalize"": false, ""pca"": 64, ""meta_weight"": 1.0}",0.8228,0.7757,0.3796
+4,virchow2+meta,virchow2+meta,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.871,0.8415,0.401
+4,hoptimus1+meta,hoptimus1+meta,"{""C"": 1.0, ""l2_normalize"": true, ""pca"": null, ""meta_weight"": 1.0}",0.8139,0.7985,0.4204
+4,"fused (agent, bandit)","fused (agent, bandit)","{""method"": ""late"", ""l2_normalize"": false, ""pca"": 64, ""meta_weight"": 3.0, ""C"": 0.001, ""combine"": ""weighted_vote""}",0.8622,0.8189,0.401
+4,best single,best single (virchow2),"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 32}",0.8678,0.8367,0.4296
+4,best single + meta,best single + meta (virchow2+meta),"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.871,0.8415,0.401

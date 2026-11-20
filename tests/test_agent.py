@@ -39,6 +39,24 @@ def test_canonical_keeps_only_used_knobs_and_rejects_bad_values():
         SPACE.canonical({**c, "l2_normalize": 1})           # int is not a bool
 
 
+def test_tuned_methods_have_only_their_own_knobs():
+    lt = SPACE.canonical({**NULLS, "method": "late_tuned", "combine": "learned_weights", "C": 0.1, "pca": 64,
+                          "stack_C": 0.01})
+    assert lt == {"method": "late_tuned", "combine": "learned_weights"}          # members fix C, L2, PCA
+    assert SPACE.canonical({**lt, "combine": "stack", "stack_C": 0.01})["stack_C"] == 0.01
+    et = SPACE.canonical({**NULLS, "method": "early_tuned", "C": 0.001, "meta_weight": 3.0, "pca": 64})
+    assert et == {"method": "early_tuned", "C": 0.001, "meta_weight": 3.0}
+    assert SPACE.size("late_tuned") == 4 + 4 and SPACE.size("early_tuned") == 7 * 3
+
+
+def test_bandit_mutation_of_a_late_tuned_trial_stays_valid():
+    rng = np.random.default_rng(0)
+    c = SPACE.canonical({"method": "late_tuned", "combine": "mean_prob"})
+    for _ in range(20):
+        m = SPACE.mutate(c, rng)
+        assert SPACE.canonical(m) == m and m != c
+
+
 def test_schema_is_strict():
     sch = SPACE.json_schema()
     assert sch["additionalProperties"] is False and set(sch["required"]) == set(sch["properties"])
@@ -57,8 +75,8 @@ def test_bandit_tries_every_method_then_is_deterministic_and_never_repeats():
     for t in range(12):
         p1, p2 = b1.propose(hist, CTX), b2.propose(hist, CTX)
         assert p1.config == p2.config                       # same seed + same history = same proposal
-        if t < 3:
-            assert p1.config["method"] == ["early", "late", "gated"][t]
+        if t < len(SPACE.methods):
+            assert p1.config["method"] == list(SPACE.methods)[t]
         k = SPACE.key(p1.config)
         assert k not in seen and SPACE.canonical(p1.config) == p1.config
         seen.add(k)
@@ -140,3 +158,37 @@ def test_agent_loop_end_to_end_on_toy_data(tmp_path):
     rows = [json.loads(x) for x in (tmp_path / "t.jsonl").read_text().splitlines()]
     assert [r_["proposer"][:6] for r_ in rows] == ["llm", "llm", "bandit"]
     assert all(np.isfinite(r_["macro_auroc_mean"]) for r_ in rows) and r.best is not None
+
+
+def test_llm_prompt_lists_the_tuned_members():
+    mem = {"virchow2": {"C": 0.001, "l2_normalize": False, "pca": 16, "meta_weight": 1.0}}
+    p = LLMProposer(SPACE, ACFG["llm"], BanditProposer(SPACE, 0), "", SEARCH, client=FakeClient([]), members=mem)
+    assert json.dumps(mem) in p.system and "late_tuned" in p.system and "early_tuned" in p.system
+
+
+def test_tuned_members_come_from_the_meta_rows(tmp_path):
+    from luad.eval.baselines import tuned_members
+    (tmp_path / "baselines").mkdir()
+    (tmp_path / "baselines" / "summary.csv").write_text(
+        'row,config\nvirchow2,"{""C"": 0.0001}"\nvirchow2+meta,"{""C"": 0.001, ""pca"": 16}"\n')
+    assert tuned_members(["virchow2"], tmp_path) == {"virchow2": {"C": 0.001, "pca": 16}}
+    with pytest.raises(FileNotFoundError):
+        tuned_members(["uni2h"], tmp_path)
+
+
+def test_llm_prompt_and_table_describe_the_best_explored_rule():
+    from luad.agent.llm import history_table
+    p = LLMProposer(SPACE, ACFG["llm"], BanditProposer(SPACE, 0), "",
+                    {**SEARCH, "explore": 10, "incumbent": "best_explored"}, client=FakeClient([]))
+    assert "Nothing is accepted during the exploration phase" in p.system
+    h = _fake_history([{"method": "late_tuned", "combine": "mean_prob"}], [0.85])[0]
+    h.update(decision="explore", gain=None, threshold=None)
+    assert "explore" in history_table([h]) and "first trial" not in history_table([h])
+
+
+def test_llm_prompt_describes_the_configured_aggregation():
+    from luad.agent.llm import AGG_TEXT
+    from luad.data.dataset import aggregation
+    p = LLMProposer(SPACE, ACFG["llm"], BanditProposer(SPACE, 0), "", SEARCH, client=FakeClient([]))
+    for m in ["uni2h", "virchow2", "hoptimus1"]:            # the proposer is told about the FUSED model's inputs
+        assert AGG_TEXT[aggregation(m, fusion=True)] in p.system

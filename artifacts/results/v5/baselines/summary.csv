@@ -1,0 +1,9 @@
+row,blocks,selected_trial,config,macro_auroc_mean,macro_auroc_sd,balanced_accuracy_mean,balanced_accuracy_sd,n_trials,stop_reason,raw_max_trial,raw_max_macro_auroc,auroc_Acinar,auroc_Cribriform,auroc_In situ,auroc_Lepidic,auroc_Micropapillary,auroc_Papillary,auroc_Solid
+meta,meta,6,"{""C"": 0.1}",0.5996,0.06,0.2481,0.0787,7,search space exhausted,6,0.5996,0.511,0.7302,0.7807,0.3562,0.5711,0.6556,0.5927
+uni2h,uni2h,4,"{""C"": 0.01, ""l2_normalize"": true, ""pca"": 32}",0.8665,0.034,0.4961,0.085,25,15 trials in a row without an accepted improvement,23,0.8728,0.8595,0.8792,0.9454,0.8382,0.8689,0.7806,0.8938
+virchow2,virchow2,2,"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 128}",0.8624,0.0307,0.4872,0.09,25,15 trials in a row without an accepted improvement,14,0.8627,0.821,0.9206,0.9801,0.7875,0.879,0.7472,0.9016
+hoptimus1,hoptimus1,2,"{""C"": 0.0001, ""l2_normalize"": true, ""pca"": 128}",0.8621,0.0339,0.4826,0.0812,25,15 trials in a row without an accepted improvement,23,0.8692,0.8672,0.8942,0.9693,0.7897,0.8511,0.7719,0.8913
+uni2h+meta,uni2h+meta,2,"{""C"": 0.001, ""l2_normalize"": false, ""pca"": 16, ""meta_weight"": 1.0}",0.8701,0.0315,0.493,0.0727,25,15 trials in a row without an accepted improvement,2,0.8701,0.8725,0.9194,0.9568,0.8327,0.8554,0.7598,0.8942
+virchow2+meta,virchow2+meta,5,"{""C"": 0.0001, ""l2_normalize"": false, ""pca"": 32, ""meta_weight"": 3.0}",0.8623,0.0305,0.4879,0.0972,25,15 trials in a row without an accepted improvement,24,0.8626,0.8189,0.9195,0.9815,0.7919,0.8778,0.7469,0.8995
+hoptimus1+meta,hoptimus1+meta,15,"{""C"": 0.001, ""l2_normalize"": true, ""pca"": null, ""meta_weight"": 10.0}",0.8674,0.0399,0.4588,0.099,30,15 trials in a row without an accepted improvement,29,0.8693,0.8568,0.9051,0.9682,0.797,0.8588,0.7791,0.907
+tile_count,tile_count,4,"{""C"": 0.001}",0.5428,0.0421,0.1836,0.0378,7,search space exhausted,4,0.5428,0.5326,0.3057,0.7543,0.4618,0.5402,0.5445,0.6604

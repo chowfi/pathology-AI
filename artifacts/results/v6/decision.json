@@ -1,0 +1,14 @@
+{
+ "rule": "use v6 if nested-CV fused outer balanced accuracy is higher than v5 AND outer AUROC is not lower than v5 by more than 1 corrected SE of the paired outer differences",
+ "v5_outer_auroc": 0.867,
+ "v6_outer_auroc": 0.8717,
+ "v5_outer_ba": 0.4661,
+ "v6_outer_ba": 0.4671,
+ "auroc_diff": 0.0047,
+ "auroc_diff_corrected_se": 0.0031,
+ "ba_diff": 0.001,
+ "folds_ba_better": 1,
+ "balanced_accuracy_higher": true,
+ "auroc_not_clearly_worse": true,
+ "final_round": "v6"
+}

@@ -5,7 +5,7 @@ the same in every row of the comparison table; only the way the three models are
 """
 from __future__ import annotations
 
-from luad.fusion.early import EarlyFusionLR
+from luad.fusion.early import EarlyFusionLR, EarlyTunedLR
 from luad.fusion.gated import GatedFusion
 from luad.fusion.late import LateFusion
 
@@ -19,6 +19,9 @@ REGISTRY = {
     "early": _early,
     "late": lambda c, clf, s: LateFusion(c, clf, s),
     "gated": lambda c, clf, s: GatedFusion(c, clf, s),
+    # v4: members = each model's own tuned single-model + metadata baseline config
+    "late_tuned": lambda c, clf, s: LateFusion(c, clf, s),
+    "early_tuned": lambda c, clf, s: EarlyTunedLR(c, clf, s),
 }
 
 

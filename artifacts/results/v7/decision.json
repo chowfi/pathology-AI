@@ -1,0 +1,17 @@
+{
+ "rule": "use the new round if nested-CV fused outer balanced accuracy is higher than the old round's AND outer AUROC is not lower than the old round's by more than 1 corrected SE of the paired outer differences",
+ "old_round": "v6",
+ "new_round": "v7",
+ "old_outer_auroc": 0.8717,
+ "new_outer_auroc": 0.867,
+ "old_outer_ba": 0.4671,
+ "new_outer_ba": 0.4794,
+ "auroc_diff": -0.0047,
+ "auroc_diff_corrected_se": 0.0128,
+ "ba_diff": 0.0122,
+ "folds_ba_better": 2,
+ "folds_auroc_better": 2,
+ "balanced_accuracy_higher": true,
+ "auroc_not_clearly_worse": true,
+ "final_round": "v7"
+}
