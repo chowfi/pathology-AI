@@ -3,8 +3,11 @@
 Reads artifacts/results/final/predictions.csv and the cohort facts, and writes:
   artifacts/results/final/test_errors.csv     one row per test patient: fused prediction, which rows were right,
                                               diagnosis, conflicting labels, slides, tiles
-  artifacts/results/final/test_recall.csv     recall per class and row
+  artifacts/results/final/test_recall.csv     recall per class and row, + "at least 1 of 3 image models right"
+  artifacts/results/final/test_class_profile.csv  per class: patients, fused recall, slides, tiles, age, sex
+  artifacts/results/final/test_confidence.csv fused accuracy by the probability of its predicted class
   artifacts/figures/report/test_confusion.png fused + meta vs best single + meta, counts
+  artifacts/figures/report/test_recall.png    recall per class with the upper bound, accuracy by confidence
 
 Usage:
   uv run --group notebooks python scripts/test_analysis.py

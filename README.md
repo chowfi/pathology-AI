@@ -1,5 +1,8 @@
 # Build an Agent for Foundation-Model Fusion in Lung Cancer Subtyping
 
+> **Running this repository:** see [RUNNING.md](RUNNING.md) for setup (`uv sync`, pinned in `uv.lock`), one entry
+> point per stage (`bash scripts/run_pipeline.sh <stage>`), and where every result is saved. The task brief follows.
+
 * **Time box:** part-time (target ~15–30 hours of focused work)
 * **Deliverable:** a reproducible repository + a short technical report
 
