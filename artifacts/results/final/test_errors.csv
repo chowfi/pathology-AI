@@ -1,0 +1,43 @@
+,true,fused_pred,p_true,p_pred,diagnosis,n_slides,all_labels,conflicting_labels,n_tiles,uni2h_right,virchow2_right,hoptimus1_right,uni2h+meta_right,fused_right,n_single_right
+WSI-288,Acinar,Micropapillary,0.101,0.326,IA,2,Acinar,False,10413,False,False,False,False,False,0
+WSI-363,Acinar,Lepidic,0.196,0.255,IA,1,Acinar,False,22630,False,False,False,False,False,0
+WSI-393,Acinar,Cribriform,0.243,0.268,IA,1,Acinar,False,10803,True,False,False,True,False,1
+WSI-235,Cribriform,Micropapillary,0.214,0.229,IA,3,Cribriform,False,18126,False,False,True,True,False,1
+WSI-245,Cribriform,Solid,0.188,0.375,IA,3,Cribriform,False,16216,False,False,False,False,False,0
+WSI-25,In situ,Lepidic,0.153,0.256,AIS,2,In situ,False,5247,True,True,False,True,False,2
+WSI-315,Lepidic,In situ,0.319,0.326,IA,3,Lepidic,False,14302,True,False,False,True,False,1
+WSI-325,Lepidic,Papillary,0.144,0.266,IA,2,Lepidic,False,11401,False,False,False,False,False,0
+WSI-370,Lepidic,In situ,0.293,0.297,IA,1,Lepidic,False,14016,True,True,False,True,False,2
+WSI-169,Micropapillary,Solid,0.257,0.291,IA,3,Micropapillary,False,18304,True,False,True,True,False,2
+WSI-322,Micropapillary,Solid,0.243,0.3,IA,3,Micropapillary,False,16188,False,False,False,False,False,0
+WSI-118,Papillary,Solid,0.156,0.217,IA,2,Papillary,False,16922,True,False,False,True,False,1
+WSI-174,Papillary,Micropapillary,0.204,0.23,IA,3,Papillary,False,11699,False,False,False,False,False,0
+WSI-382,Papillary,Lepidic,0.169,0.245,IA,1,Papillary,False,16038,False,False,False,False,False,0
+WSI-77,Papillary,Micropapillary,0.132,0.353,IA,1,Papillary,False,9002,False,False,False,False,False,0
+WSI-132,Solid,Papillary,0.104,0.259,IA,3,Solid,False,19343,False,False,False,False,False,0
+WSI-282,Acinar,Acinar,0.251,0.251,IA,2,Acinar,False,11535,True,True,True,True,True,3
+WSI-300,Acinar,Acinar,0.275,0.275,IA,2,Acinar,False,9645,False,False,True,False,True,1
+WSI-372,Acinar,Acinar,0.385,0.385,IA,2,Acinar;In situ,True,10334,True,True,True,True,True,3
+WSI-403,Acinar,Acinar,0.337,0.337,IA,1,Acinar,False,10935,True,False,True,True,True,2
+WSI-200,Cribriform,Cribriform,0.241,0.241,IA,2,Cribriform,False,26259,False,True,True,False,True,2
+WSI-11,In situ,In situ,0.632,0.632,AIS,2,In situ,False,6079,True,True,True,True,True,3
+WSI-13,In situ,In situ,0.606,0.606,AIS,3,In situ,False,7809,True,True,True,True,True,3
+WSI-19,In situ,In situ,0.539,0.539,AIS,2,In situ,False,8169,True,True,True,True,True,3
+WSI-388,In situ,In situ,0.467,0.467,AIS,1,In situ,False,8566,True,False,True,True,True,2
+WSI-407,In situ,In situ,0.579,0.579,AIS,1,In situ,False,6203,True,True,True,True,True,3
+WSI-55,In situ,In situ,0.725,0.725,AIS,2,In situ,False,4532,True,True,True,True,True,3
+WSI-57,In situ,In situ,0.699,0.699,AIS,2,In situ,False,4595,True,True,True,True,True,3
+WSI-61,In situ,In situ,0.744,0.744,AIS,2,In situ,False,6524,True,True,True,True,True,3
+WSI-364,Lepidic,Lepidic,0.288,0.288,MIA,1,Lepidic,False,8517,True,False,False,False,True,1
+WSI-154,Micropapillary,Micropapillary,0.262,0.262,IA,3,Micropapillary,False,16698,True,True,False,True,True,2
+WSI-258,Micropapillary,Micropapillary,0.434,0.434,IA,3,Micropapillary,False,17241,True,True,True,True,True,3
+WSI-408,Micropapillary,Micropapillary,0.343,0.343,IA,1,Micropapillary,False,13384,True,True,True,True,True,3
+WSI-111,Papillary,Papillary,0.274,0.274,IA,1,Papillary,False,5902,True,True,True,True,True,3
+WSI-180,Papillary,Papillary,0.257,0.257,IA,2,Papillary,False,9054,True,True,True,True,True,3
+WSI-35,Papillary,Papillary,0.235,0.235,IA,4,Papillary,False,7935,False,False,False,True,True,0
+WSI-97,Papillary,Papillary,0.316,0.316,IA,1,Papillary,False,15163,True,False,True,True,True,2
+WSI-157,Solid,Solid,0.332,0.332,IA,3,Solid,False,16293,True,True,False,True,True,2
+WSI-186,Solid,Solid,0.405,0.405,IA,2,Solid,False,8310,True,True,True,True,True,3
+WSI-207,Solid,Solid,0.371,0.371,IA,2,Solid,False,15124,True,True,True,True,True,3
+WSI-232,Solid,Solid,0.271,0.271,IA,3,Solid,False,12049,False,True,True,False,True,2
+WSI-95,Solid,Solid,0.257,0.257,IA,2,Solid,False,16179,False,True,True,True,True,2
