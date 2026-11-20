@@ -1,1 +1,2 @@
 {"time": "2026-11-19T21:55:13", "split_file": "artifacts/splits/split_seed30.csv", "reason": "final evaluation of the locked v7 rows and fused model (scripts/final_test.py)"}
+{"time": "2026-11-20T16:24:49", "split_file": "artifacts/splits/split_seed30.csv", "reason": "visualization only: attention maps of the final networks, retrained with the final cross-fit seed and checked against vectors.npz; no classifier fit, no metric (scripts/test_attention.py)"}

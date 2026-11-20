@@ -65,6 +65,15 @@ def main() -> None:
     rec = rec.round(2)
     rec.to_csv(final / "test_recall.csv")
 
+    prof = pd.DataFrame({"patients": true.value_counts(), "fused_recall": t.groupby("true").fused_right.mean(),
+                         "share_with_more_slides": (t.n_slides > 1).groupby(t.true).mean(),
+                         "median_tiles": t.groupby("true").n_tiles.median(),
+                         "median_age": cohort["Age"].groupby(true).median(),
+                         "share_female": (cohort["Sex"] == "Female").groupby(true).mean()}).reindex(CLASSES).round(2)
+    prof.index.name = "true"
+    prof.to_csv(final / "test_class_profile.csv")
+    print(f"\nper-class profile:\n{prof.to_string()}")
+
     bins = pd.cut(t.p_pred, [0, 0.3, 0.4, 1.0], right=False, labels=["< 0.30", "0.30-0.40", ">= 0.40"])
     conf = t.groupby(bins, observed=False).fused_right.agg(patients="size", accuracy="mean").round(2)
     conf.index.name = "fused_p_pred"

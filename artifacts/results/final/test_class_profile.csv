@@ -1,0 +1,8 @@
+true,patients,fused_recall,share_with_more_slides,median_tiles,median_age,share_female
+Acinar,7,0.57,0.57,10803.0,54.0,0.57
+Cribriform,3,0.33,1.0,18126.0,66.0,0.67
+In situ,9,0.89,0.78,6203.0,46.0,0.78
+Lepidic,4,0.25,0.5,12708.5,56.0,1.0
+Micropapillary,5,0.6,0.8,16698.0,56.0,0.4
+Papillary,8,0.5,0.5,10376.5,61.0,0.75
+Solid,6,0.83,1.0,15651.5,56.5,0.5

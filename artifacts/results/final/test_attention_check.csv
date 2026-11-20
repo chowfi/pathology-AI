@@ -1,0 +1,7 @@
+model,split,max_abs_diff
+uni2h,dev,0.0
+uni2h,test,0.0
+hoptimus1,dev,0.0
+hoptimus1,test,0.0
+joint,dev,0.0
+joint,test,0.0
