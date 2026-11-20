@@ -27,6 +27,8 @@ from luad.data.dataset import CLASSES  # noqa: E402
 SURF, INK, INK2 = "#fcfcfb", "#0b0b0b", "#52514e"
 BLUES = LinearSegmentedColormap.from_list("blues", ["#fcfcfb", "#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"])
 SINGLE = ["uni2h", "virchow2", "hoptimus1"]
+ANY1 = "at least 1 of 3 image models right"
+BLUE, ORANGE = "#2a78d6", "#eb6834"      # categorical slots 1-2 of the reference palette
 
 
 def main() -> None:
@@ -54,9 +56,19 @@ def main() -> None:
     t.to_csv(final / "test_errors.csv")
 
     rec = pd.DataFrame({r: [(wide[r][true == c] == c).mean() for c in CLASSES] for r in wide.columns},
-                       index=CLASSES).T.round(2)
+                       index=CLASSES).T
     rec["n_right"] = [(wide[r] == true).sum() for r in rec.index]
+    # upper bound for picking the right model per patient: at least one of the 3 image-only models is right
+    any1 = t[[f"{m}_right" for m in SINGLE]].any(axis=1)
+    rec.loc[ANY1] = [any1[t.true == c].mean() for c in CLASSES] + [any1.sum()]
+    rec.insert(len(CLASSES), "BA", rec[CLASSES].mean(axis=1))
+    rec = rec.round(2)
     rec.to_csv(final / "test_recall.csv")
+
+    bins = pd.cut(t.p_pred, [0, 0.3, 0.4, 1.0], right=False, labels=["< 0.30", "0.30-0.40", ">= 0.40"])
+    conf = t.groupby(bins, observed=False).fused_right.agg(patients="size", accuracy="mean").round(2)
+    conf.index.name = "fused_p_pred"
+    conf.to_csv(final / "test_confidence.csv")
 
     wrong, right = t[~t.fused_right], t[t.fused_right]
     print(f"test patients per class: {true.value_counts().reindex(CLASSES).to_dict()}")
@@ -72,6 +84,9 @@ def main() -> None:
     print(f"\nfused errors:\n{wrong[['true', 'fused_pred', 'p_true', 'p_pred', 'diagnosis', 'all_labels', 'n_slides', 'n_single_right', f'{best}_right']].to_string()}")
     print(f"median fused probability of the predicted class: right {right.p_pred.median():.2f}, "
           f"wrong {wrong.p_pred.median():.2f}")
+    print(f"\nfused accuracy by confidence (probability of the predicted class):\n{conf.to_string()}")
+    print(f"\nfused errors, true -> predicted:\n"
+          f"{wrong.groupby(['true', 'fused_pred']).size().sort_values(ascending=False).to_string()}")
 
     cm = pd.read_csv(final / "confusion.csv")
     label = {"uni2h": "UNI2-h", "virchow2": "Virchow2", "hoptimus1": "H-optimus-1"}
@@ -102,7 +117,39 @@ def main() -> None:
     fig.tight_layout()
     out = repo_path("artifacts/figures/report/test_confusion.png")
     fig.savefig(out, dpi=200)
-    print(f"\nwrote {out}, {final / 'test_errors.csv'}, {final / 'test_recall.csv'}")
+
+    # recall per class: best single + meta vs fused, with the "at least one image model right" upper bound
+    n_cls = true.value_counts().reindex(CLASSES)
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(11, 4.2), facecolor=SURF, gridspec_kw={"width_ratios": [3.2, 1]})
+    x, w = np.arange(len(CLASSES)), 0.36
+    for k, (r, col, lab) in enumerate([(best, ORANGE, names[best]), ("fused", BLUE, names["fused"])]):
+        v = rec.loc[r, CLASSES].astype(float).values
+        ax.bar(x + (k - 0.5) * w, v, w - 0.03, color=col, label=f"{lab}: BA {ba[r]:.3f}", zorder=2)
+    ub = rec.loc[ANY1, CLASSES].astype(float).values
+    ax.scatter(x, ub, marker="_", s=900, linewidths=2.2, color=INK, zorder=3,
+               label=f"At least 1 of 3 image models right: BA {rec.loc[ANY1, 'BA']:.2f}")
+    ax.set_xticks(x, [f"{c}\n({k})" for c, k in zip(CLASSES, n_cls)], fontsize=8, color=INK2)
+    ax.set_ylim(0, 1.08); ax.set_ylabel("Recall (share of the class right)", color=INK2)
+    ax.legend(loc="upper left", bbox_to_anchor=(0, -0.2), ncol=1, frameon=False, fontsize=8.5, labelcolor=INK, markerscale=0.45)
+    ax.set_title("Recall per class (test patients in brackets)", loc="left", fontsize=10, color=INK)
+    bx.bar(range(len(conf)), conf.accuracy.values, 0.6, color=BLUE, zorder=2)
+    for i, (n_, a_) in enumerate(zip(conf.patients, conf.accuracy)):
+        bx.text(i, a_ + 0.03, f"{a_:.2f}\nn={n_}", ha="center", va="bottom", fontsize=8, color=INK)
+    bx.set_xticks(range(len(conf)), conf.index.astype(str), fontsize=8, color=INK2)
+    bx.set_xlabel("Fused probability of the predicted class", color=INK2)
+    bx.set_ylim(0, 1.25); bx.set_ylabel("Fused accuracy", color=INK2)
+    bx.set_title("Accuracy by confidence", loc="left", fontsize=10, color=INK)
+    for a in (ax, bx):
+        a.set_facecolor(SURF); a.tick_params(length=0, colors=INK2)
+        a.yaxis.grid(True, color="#e4e3df", linewidth=0.8, zorder=0)
+        for s in a.spines.values():
+            s.set_visible(False)
+    fig.suptitle("Test set (42 patients, one run, saved predictions)", x=0.01, ha="left", fontsize=11, color=INK)
+    fig.tight_layout()
+    out2 = repo_path("artifacts/figures/report/test_recall.png")
+    fig.savefig(out2, dpi=200, bbox_inches="tight")
+    print(f"\nwrote {out}, {out2}, {final / 'test_errors.csv'}, {final / 'test_recall.csv'}, "
+          f"{final / 'test_confidence.csv'}")
 
 
 if __name__ == "__main__":
